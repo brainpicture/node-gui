@@ -5,6 +5,13 @@
 #include <iostream>
 using namespace v8;
 
+class gtk_data {
+  public:
+	Local<Object> windowObject;
+	Handle<Object> recv;
+};
+
+
 // Window ----------------------------------
 Handle<Value>
 window_show(const Arguments& args)
@@ -26,6 +33,40 @@ window_setTitle(const Arguments& args)
   gtk_window_set_title(GTK_WINDOW (wnd), *title);
 }
 
+
+Handle<Value>
+window_onClose(const Arguments& args)
+{
+  Local<Object> windowObject = args.This();
+  GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("windowHandle")))->Value());
+
+  v8::Local<v8::Object> arguments = v8::Object::New();
+  arguments->Set(String::New("callback"),args[0]);
+  Persistent<Object> *data = new Persistent<Object>();
+  *data = Persistent<Object>::New(arguments);
+  //Persistent data = reinterpret_cast<Persistent>(windowObject);
+ 
+}
+
+void
+window_destroy(GtkWidget widget, void* data)
+{
+	printf("CALLBACK: \n");
+	//gtk_data *fd=(gtk_data *)data;
+	//fd->windowObject->Get(String::New("onClose"));
+	Persistent<Object> *windowObject = reinterpret_cast<Persistent<Object>*>(data);
+	
+	v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast((*windowObject)->Get(String::New("onClose")));
+    //Handle<Object> recv = Handle<Object>::Cast(fd->recv);
+    v8::Handle<v8::Value> outArgs[] = {String::New((char *)"wow",32)};
+    //callback->Call(recv, 1, outArgs);
+    callback->Call((*windowObject), 1, outArgs);
+	
+/*  Handle callback;
+  Handle argv[] = { (data) };
+  callback = Handle::Cast((data)->Get(String::New("onClose")));
+  callback->Call((*data), 1, argv);*/
+}
 
 Handle<Value>
 window(const Arguments& args)
@@ -50,12 +91,25 @@ window(const Arguments& args)
   else
   	height=Integer::New(480);
   
+  
   gtk_window_set_default_size (GTK_WINDOW (wnd),width->Value(),height->Value());
   
   windowObject->Set(String::New("windowHandle"),  v8::External::New(wnd));
 
   windowObject->Set(String::New("show"), FunctionTemplate::New(window_show)->GetFunction());
   windowObject->Set(String::New("setTitle"), FunctionTemplate::New(window_setTitle)->GetFunction());
+  //windowObject->Set(String::New("onClose"), FunctionTemplate::New(window_onClose)->GetFunction());
+  
+  
+  Persistent<Object> *data = new Persistent<Object>();
+	  *data = Persistent<Object>::New(windowObject);
+  
+  //gtk_data *gd=new gtk_data;  
+  //gd->windowObject=data;
+  
+  g_signal_connect (G_OBJECT (wnd), "destroy", G_CALLBACK (window_destroy), static_cast<void*>(data));
+  
+  
   return windowObject;
 }
 

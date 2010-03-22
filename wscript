@@ -14,7 +14,7 @@ def configure(conf):
 		'-DNDEBUG -DGTK -DGTK2 -DSCI_LEXER -DG_THREADS_IMPL_NONE'.split())
 
 def build(bld):
-  obj = bld.new_task_gen("cxx", "shlib", "node_addon",uselib = 'GTK')
+  obj = bld.new_task_gen("cxx", "shlib", "pthread", "node_addon",uselib = 'GTK')
   obj.packages='gtk+-2.0'
   obj.target = "gtk"
   obj.source = "bindings/gtk.cc"

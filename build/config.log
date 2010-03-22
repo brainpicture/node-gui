@@ -1,0 +1,28 @@
+# project  configured on Mon Mar 22 13:57:33 2010 by
+# waf 1.5.10 (abi 7, python 20604f0 on linux2)
+# using /usr/local/bin/node-waf configure build
+#
+Checking for program g++,c++
+
+find program=['g++', 'c++'] paths=[] var='CXX' -> '/usr/bin/g++'
+
+Checking for program cpp
+
+find program=['cpp'] paths=[] var='CPP' -> '/usr/bin/cpp'
+
+Checking for program ar
+
+find program=['ar'] paths=[] var='AR' -> '/usr/bin/ar'
+
+Checking for program ranlib
+
+find program=['ranlib'] paths=[] var='RANLIB' -> '/usr/bin/ranlib'
+
+Checking for g++ 
+
+Checking for node prefix 
+
+Checking for gtk+-2.0 >= 2.8.0
+
+pkg-config --errors-to-stdout --print-errors --atleast-version=2.8.0 gtk+-2.0
+pkg-config --errors-to-stdout --print-errors --cflags --libs gtk+-2.0
