@@ -14,7 +14,5 @@ var wnd = gui.window({
 
 wnd.add(gui.button({title: 'тест тест'}));
 
-
-
 gui.main();
 sys.puts('test 2');
