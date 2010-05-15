@@ -1,8 +1,6 @@
 var gui=require('./gtk');
 var sys=require('sys');
 
-sys.puts('test 1');
-
 var wnd = gui.window({
 	title: 'Тестовое приложение',
 	width: 600,
@@ -12,7 +10,14 @@ var wnd = gui.window({
 	}
 }).show();
 
-wnd.add(gui.button({title: 'тест тест'}));
+wnd.add(gui.button({
+	title: 'тест тест',
+	onClick: function() {
+		sys.puts('wow wow pressed тест');
+	}
+}));
 
 gui.main();
-sys.puts('test 2');
+//setInterval(function() {
+//	sys.puts('working');
+//},1000);
