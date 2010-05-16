@@ -16,11 +16,11 @@ int main_loop_level = 0;
 Handle<Value>
 main_iteration(const Arguments& args)
 {
-  if (gtk_events_pending()) {
+  while (gtk_events_pending()) {
   	gtk_main_iteration();
   }
   
-  return Boolean::New(false);
+  return Boolean::New(main_loop_level == 0);
 }
 
 // Window ----------------------------------
@@ -35,6 +35,13 @@ window_show(const Arguments& args)
   gtk_widget_show(wnd);
   
   main_loop_level++;
+  if (main_loop_level == 1) {
+  	v8::Handle<v8::Value> onShow = windowObject->Get(String::New("onShow"));
+    if (onShow->IsFunction()) {
+	  v8::Handle<v8::Value> emptyArgs[] = {};
+	  v8::Handle<v8::Function>::Cast(onShow)->Call(windowObject, 0, emptyArgs);
+    }
+  }
   
   return windowObject;
 }
