@@ -5,12 +5,6 @@
 #include <iostream>
 using namespace v8;
 
-class gtk_data {
-  public:
-	Local<Object> windowObject;
-	Handle<Object> recv;
-};
-
 int main_loop_level = 0;
 
 Handle<Value>
@@ -32,7 +26,7 @@ window_show(const Arguments& args)
   Local<Object> windowObject = args.This();
   GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("handle")))->Value());
   
-  gtk_widget_show(wnd);
+  gtk_widget_show_all(wnd);
   
   main_loop_level++;
   if (main_loop_level == 1) {
@@ -84,11 +78,11 @@ window_add(const Arguments& args)
   GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("handle")))->Value());
   
   
-  Local<Object> buttonObject = args[0]->ToObject();
-  GtkWidget *btn = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(buttonObject->Get(String::New("handle")))->Value());
+  Local<Object> otherObject = args[0]->ToObject();
+  GtkWidget *obj = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(otherObject->Get(String::New("handle")))->Value());
   
-  gtk_container_add (GTK_CONTAINER (wnd), btn);
-  gtk_widget_show (btn);
+  gtk_container_add(GTK_CONTAINER (wnd), obj);
+  gtk_widget_show(obj);
   return windowObject;
 }
 
@@ -192,11 +186,83 @@ button(const Arguments& args)
   buttonObject->Set(String::New("setTitle"), FunctionTemplate::New(button_setTitle)->GetFunction());
   buttonObject->Set(String::New("onClick"), FunctionTemplate::New(button_onClick)->GetFunction());
   
-  //Local<Object> params = args[0]->ToObject();
   return buttonObject;
 }
 
+// Hbox ----------------------------------
+Handle<Value>
+HBox_add(const Arguments& args)
+{
+  Local<Object> hboxButton = args.This();
+  GtkWidget *hbox = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(hboxButton->Get(String::New("handle")))->Value());
+  
+  
+  Local<Object> otherObject = args[0]->ToObject();
+  GtkWidget *obj = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(otherObject->Get(String::New("handle")))->Value());
+  
+  gtk_container_add(GTK_CONTAINER(hbox), obj);
+  gtk_widget_show(obj);
+  return hboxButton;
+}
 
+
+Handle<Value>
+HBox(const Arguments& args)
+{
+  HandleScope scope;
+  Local<Object> hboxButton = Object::New();
+  
+  GtkWidget *hbox = gtk_hbox_new(false, 0);
+  
+  hboxButton->Set(String::New("handle"),  v8::External::New(hbox));
+  hboxButton->Set(String::New("add"), FunctionTemplate::New(HBox_add)->GetFunction());
+  
+  return hboxButton;
+}
+
+// Vbox ----------------------------------
+Handle<Value>
+VBox_add(const Arguments& args)
+{
+  Local<Object> vboxButton = args.This();
+  GtkWidget *vbox = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(vboxButton->Get(String::New("handle")))->Value());
+  
+  
+  Local<Object> otherObject = args[0]->ToObject();
+  GtkWidget *obj = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(otherObject->Get(String::New("handle")))->Value());
+  
+  gtk_container_add(GTK_CONTAINER(vbox), obj);
+  gtk_widget_show(obj);
+  return vboxButton;
+}
+
+
+Handle<Value>
+VBox(const Arguments& args)
+{
+  HandleScope scope;
+  Local<Object> vboxButton = Object::New();
+  
+  GtkWidget *vbox = gtk_vbox_new(false, 0);
+  
+  vboxButton->Set(String::New("handle"),  v8::External::New(vbox));
+  vboxButton->Set(String::New("add"), FunctionTemplate::New(VBox_add)->GetFunction());
+  
+  return vboxButton;
+}
+
+// Alert ----------------------------------
+
+Handle<Value>
+Alert(const Arguments& args)
+{
+  String::Utf8Value title(args[0]->ToString());
+  GtkWidget* dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s","Alert");
+  gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", *title);
+  gtk_dialog_run(GTK_DIALOG(dialog));
+  gtk_widget_destroy(dialog);
+  return Boolean::New(true);
+}
 
 extern "C" void init (Handle<Object> target)
 {
@@ -204,6 +270,9 @@ extern "C" void init (Handle<Object> target)
   gtk_init(NULL, NULL);
   target->Set(String::New("window"), FunctionTemplate::New(window)->GetFunction());
   target->Set(String::New("button"), FunctionTemplate::New(button)->GetFunction());
+  target->Set(String::New("HBox"), FunctionTemplate::New(HBox)->GetFunction());
+  target->Set(String::New("VBox"), FunctionTemplate::New(VBox)->GetFunction());
+  target->Set(String::New("alert"), FunctionTemplate::New(Alert)->GetFunction());
 
   target->Set(String::New("main"), FunctionTemplate::New(main_iteration)->GetFunction());
 }
