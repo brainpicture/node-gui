@@ -16,5 +16,12 @@ def configure(conf):
 def build(bld):
   obj = bld.new_task_gen("cxx", "shlib", "pthread", "node_addon",uselib = 'GTK')
   obj.packages='gtk+-2.0'
-  obj.target = "gtk"
-  obj.source = "bindings/gtk.cc"
+  obj.target = "node-gtk"
+  obj.source = """
+	       bindings/gtk-window.cc
+	       bindings/gtk-hbox.cc
+	       bindings/gtk-vbox.cc
+	       bindings/gtk-button.cc
+	       bindings/gtk-alert.cc
+  	       bindings/gtk.cc
+  	       """
