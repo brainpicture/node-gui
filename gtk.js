@@ -9,18 +9,22 @@ exports.main = function() {
 
 exports.window = function(params) {
 	var window = gtk.window(params);
-	if (params.title != null) window.setTitle(params.title);
-	if (params.width != null || params.height != null) window.setSize(params.width, params.height);
-	if (params.onClose != null) window.onClose(params.onClose);
-	window.onShow = exports.main;
+	if (params.title != null) window.set_title(params.title);
+	if (params.width != null || params.height != null) window.set_size(params.width, params.height);
+	if (params.dimensions != null) window.set_frame_dimensions(params.dimensions.left, params.dimensions.top, params.dimensions.right, params.dimensions.bottom);
+	if (params.position != null) window.set_position(params.position);
+	if (params.opacity != null) window.set_opacity(params.opacity);
+	if (params.resizable != null) window.set_resizable(params.resizable);
+	if (params.on_close != null) window.on_close(params.on_close);
+	window.on_show = exports.main;
 
 	window.container = exports.v({items: params.items});
 	window.add(window.container);
 	window.add = function(obj) {
 		window.container.add(obj);
-	}
+	};
 	return window;
-}
+};
 
 exports.button = function(params) {
 	var button = gtk.button();

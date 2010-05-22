@@ -5,6 +5,9 @@ var wnd = gui.window({
 	title: 'Тестовое приложение',
 	width: 600,
 	height: 400,
+	opacity: 0.7,
+	resizable: true,
+	position: 1,
 	items: [
 		gui.button({
 			title: 'шапка',
@@ -24,7 +27,7 @@ var wnd = gui.window({
 			title: 'футер',
 		})
 	],
-	onClose: function() {
+	on_close: function() {
 		gui.alert('Good bie!');
 	}
 }).show();
