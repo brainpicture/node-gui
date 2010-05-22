@@ -4,6 +4,7 @@
 #include "gtk-node.h"
 
 #include <iostream>
+#include <stdio.h>
 using namespace v8;
 
 // Window ----------------------------------
@@ -17,7 +18,10 @@ window_show(const Arguments& args)
   
   gtk_widget_show_all(wnd);
   
+  std::cout << "Loop level: " << main_loop_level;
+  
   main_loop_level++;
+  std::cout << "Loop level: " << main_loop_level;
   if (main_loop_level == 1) {
   	v8::Handle<v8::Value> onShow = windowObject->Get(String::New("onShow"));
     if (onShow->IsFunction()) {

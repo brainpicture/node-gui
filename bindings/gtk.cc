@@ -9,7 +9,11 @@
 #include "gtk-vbox.h"
 
 #include <iostream>
+#include <stdio.h>
 using namespace v8;
+
+//global var
+int main_loop_level = 0;
 
 Handle<Value>
 main_iteration(const Arguments& args)

@@ -1,4 +1,4 @@
-var gtk=require('./build/default/gtk');
+var gtk=require('./build/default/node-gtk');
 var sys=require('sys');
 
 exports.main = function() {
@@ -13,7 +13,7 @@ exports.window = function(params) {
 	if (params.width != null || params.height != null) window.setSize(params.width, params.height);
 	if (params.onClose != null) window.onClose(params.onClose);
 	window.onShow = exports.main;
-	
+
 	window.container = exports.v({items: params.items});
 	window.add(window.container);
 	window.add = function(obj) {

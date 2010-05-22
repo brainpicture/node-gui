@@ -6,8 +6,9 @@
 #include <iostream>
 using namespace v8;
 
-// Alert ----------------------------------
+extern int main_loop_level;
 
+// Alert ----------------------------------
 Handle<Value>
 Alert(const Arguments& args)
 {
