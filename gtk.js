@@ -28,29 +28,35 @@ exports.window = function(params) {
 
 exports.button = function(params) {
 	var button = gtk.button();
-	if (params.title != null) button.setTitle(params.title);
-	if (params.onClick != null) button.onClick(params.onClick);
+	if (params.title != null) button.set_title(params.title);
+	if (params.on_click != null) button.on_click(params.on_click);
 	return button;
-}
+};
+
+exports.entry = function(params) {
+	var entry = gtk.entry();
+	if (params.text != null) entry.set_text(params.text);
+	return entry;
+};
 
 exports.HBox = exports.h = function(params) {
 	var hbox = gtk.HBox();
-	if (typeof(params)=='object' && (params instanceof Array)) params = {items: params}
+  if (typeof(params)=='object' && (params instanceof Array)) params = {items: params};
 	if (params.items) for (i in params.items) {
 		hbox.add(params.items[i]);
 	}
 	return hbox;
-}
+};
 
 exports.VBox = exports.v = function(params) {
 	var vbox = gtk.VBox();
-	if (typeof(params)=='object' && (params instanceof Array)) params = {items: params}
+  if (typeof(params)=='object' && (params instanceof Array)) params = {items: params};
 	if (params.items) for (i in params.items) {
 		vbox.add(params.items[i]);
 	}
 	return vbox;
-}
+};
 
 exports.alert = function(title) {
 	gtk.alert(title);
-}
+};

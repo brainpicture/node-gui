@@ -79,3 +79,4 @@ GtkWindow
 * Pagers
 * Hints
 * Gravity
+* Make GtkWidget bindings and subclass it for shared methods

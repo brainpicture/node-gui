@@ -23,5 +23,6 @@ def build(bld):
 	       bindings/gtk-vbox.cc
 	       bindings/gtk-button.cc
 	       bindings/gtk-alert.cc
+	       bindings/gtk-entry.cc
   	       bindings/gtk.cc
   	       """

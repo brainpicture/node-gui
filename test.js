@@ -18,14 +18,15 @@ var wnd = gui.window({
 			}),
 			gui.button({
 				title: 'право',
-				onClick: function() {
+				on_click: function() {
 					gui.alert('wow');
 				}
 			})
 		]),
 		gui.button({
 			title: 'футер',
-		})
+		}),
+		gui.entry({text:'Hai'})
 	],
 	on_close: function() {
 		gui.alert('Good bie!');

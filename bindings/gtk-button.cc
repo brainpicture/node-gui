@@ -6,9 +6,9 @@
 #include <iostream>
 using namespace v8;
 
-Handle<Value> button_setTitle(const Arguments& args) {
+Handle<Value> button_set_title(const Arguments& args) {
     Local<Object> buttonObject = args.This();
-    GtkWidget *btn = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(buttonObject->Get(String::New("handle")))->Value());
+    GtkWidget *btn = static_cast<GtkWidget*>(Handle<External>::Cast(buttonObject->Get(String::New("handle")))->Value());
   
     String::Utf8Value title(args[0]->ToString());
     gtk_button_set_label(GTK_BUTTON(btn), *title);
@@ -17,9 +17,9 @@ Handle<Value> button_setTitle(const Arguments& args) {
 void button_on_click_callback(GtkWidget *widget, gpointer dataCast) {
     HandleScope scope;
     Persistent<Object> *data = reinterpret_cast<Persistent<Object>*>(dataCast);
-    v8::Handle<v8::Value> on_click = (*data)->Get(String::New("on_click"));
+    Handle<Value> on_click = (*data)->Get(String::New("on_click"));
     if (on_click->IsFunction()) {
-	v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(on_click);
+	v8::Handle<v8::Function> callback = Handle<Function>::Cast(on_click);
 	v8::Handle<v8::Value> emptyArgs[] = {};
 	callback->Call((*data), 0, emptyArgs);
     }
@@ -27,7 +27,7 @@ void button_on_click_callback(GtkWidget *widget, gpointer dataCast) {
 
 Handle<Value> button_on_click(const Arguments& args) {
     Local<Object> buttonObject = args.This();
-    GtkWidget *btn = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(buttonObject->Get(String::New("handle")))->Value());
+    GtkWidget *btn = static_cast<GtkWidget*>(Handle<External>::Cast(buttonObject->Get(String::New("handle")))->Value());
   
     buttonObject->Set(String::New("on_click"), args[0]);
   
@@ -44,7 +44,7 @@ Handle<Value> button(const Arguments& args) {
   
     GtkWidget *btn = gtk_button_new();
   
-    buttonObject->Set(String::New("handle"),  v8::External::New(btn));
+    buttonObject->Set(String::New("handle"),  External::New(btn));
     buttonObject->Set(String::New("set_title"), FunctionTemplate::New(button_set_title)->GetFunction());
     buttonObject->Set(String::New("on_click"), FunctionTemplate::New(button_on_click)->GetFunction());
   

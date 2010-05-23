@@ -4,6 +4,7 @@
 #include "gtk-node.h"
 #include "gtk-window.h"
 #include "gtk-alert.h"
+#include "gtk-entry.h"
 #include "gtk-button.h"
 #include "gtk-hbox.h"
 #include "gtk-vbox.h"
@@ -28,6 +29,7 @@ extern "C" void init (Handle<Object> target) {
     gtk_init(NULL, NULL);
     target->Set(String::New("window"), FunctionTemplate::New(window)->GetFunction());
     target->Set(String::New("button"), FunctionTemplate::New(button)->GetFunction());
+    target->Set(String::New("entry"), FunctionTemplate::New(entry)->GetFunction());
     target->Set(String::New("HBox"), FunctionTemplate::New(HBox)->GetFunction());
     target->Set(String::New("VBox"), FunctionTemplate::New(VBox)->GetFunction());
     target->Set(String::New("alert"), FunctionTemplate::New(Alert)->GetFunction());
