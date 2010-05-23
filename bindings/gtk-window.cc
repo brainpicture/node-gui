@@ -8,8 +8,9 @@
 #include <stdio.h>
 using namespace v8;
 
-// Window ----------------------------------
-
+/**
+   Show the window.
+ */
 Handle<Value> window_show(const Arguments& args) {
     HandleScope scope;
     Local<Object> windowObject = args.This();
@@ -29,6 +30,9 @@ Handle<Value> window_show(const Arguments& args) {
     return windowObject;
 }
 
+/**
+   Set the window title
+ */
 Handle<Value> window_set_title(const Arguments& args) {
     Local<Object> windowObject = args.This();
     GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("handle")))->Value());
@@ -38,6 +42,9 @@ Handle<Value> window_set_title(const Arguments& args) {
     return windowObject;
 }
 
+/**
+   Set the window size
+ */
 Handle<Value> window_set_size(const Arguments& args) {
     Local<Object> windowObject = args.This();
     GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("handle")))->Value());
@@ -168,10 +175,10 @@ Handle<Value> window_add(const Arguments& args) {
 }
 
 /**
-   Allows for callbacks 
+   Fire the on_close callback
 */
 void window_on_close_callback(GtkWidget *widget, gpointer dataCast) {
-    HandleScope scope; //posible memory leak?
+    HandleScope scope;
     Persistent<Object> *data = reinterpret_cast<Persistent<Object>*>(dataCast);
     v8::Handle<v8::Value> on_close = (*data)->Get(String::New("on_close"));
     if (on_close->IsFunction()) {
@@ -182,6 +189,9 @@ void window_on_close_callback(GtkWidget *widget, gpointer dataCast) {
     main_loop_level--;
 }
 
+/**
+   Allow for callbacks when the window closes.
+ */
 Handle<Value> window_on_close(const Arguments& args) {
     Local<Object> windowObject = args.This();
     GtkWidget *wnd = static_cast<GtkWidget*>(v8::Handle<v8::External>::Cast(windowObject->Get(String::New("handle")))->Value());
@@ -195,6 +205,9 @@ Handle<Value> window_on_close(const Arguments& args) {
     return windowObject;
 }
 
+/**
+   Baser window object. This provides JS level method access and returns a window object.
+ */
 Handle<Value> window(const Arguments& args) {
     HandleScope scope;
   
