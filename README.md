@@ -69,3 +69,15 @@ Design, I suggest:
 			])
 		]
 	}).show();
+
+TODO:
+-----------
+
+GtkWindow
+* All Getters
+* Accelorator Groups (keyboard combos)
+* Focus (need to pass widgets around)
+* Pagers
+* Hints
+* Gravity
+* Make GtkWidget bindings and subclass it for shared methods
