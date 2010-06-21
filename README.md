@@ -1,5 +1,6 @@
 ## Some basic GTK functions bindings
 It's just an experement, but if you're interested, you can fork it!
+Now it works only with GTK, but you can write bindings for any toolkit.
 
 Now works:
 	var gui=require('./gtk');

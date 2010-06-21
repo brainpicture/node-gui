@@ -2,9 +2,9 @@ var gtk=require('./build/default/gtk');
 var sys=require('sys');
 
 exports.main = function() {
-	if (!gtk.main()) process.nextTick(function() {
+	if (!gtk.main()) setTimeout(function() {
 		exports.main();
-	});
+	},20);
 };
 
 exports.window = function(params) {

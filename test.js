@@ -25,6 +25,6 @@ var wnd = gui.window({
 		})
 	],
 	onClose: function() {
-		gui.alert('Good bie!');
+		gui.alert('Good bye!');
 	}
 }).show();
