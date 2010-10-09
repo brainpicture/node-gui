@@ -19,4 +19,16 @@ GtkWidget* Widget::Gtk (Handle<Object> obj) {
   return ObjectWrap::Unwrap<Widget>(obj)->widget_;
 }
 
+// onDestroy() - Called when the window is being destoyed.
+void Widget::onDestroy (GtkWidget *widget, gpointer dataCast) {
+  Persistent<Object>   *self      = reinterpret_cast<Persistent<Object>*>(dataCast);
+  v8::Handle<v8::Value> onDestroy = (*self)->Get(String::New("onDestroy"));
+
+  if (onDestroy->IsFunction()) {
+    Handle<Function>::Cast(onDestroy)->Call(*self, 0, NULL);
+  }
+
+  main_loop_level--;
+}
+
 } // namespace ngtk

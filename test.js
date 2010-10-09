@@ -15,7 +15,7 @@ window.setDefaultSize();
 window.setPosition();
 window.setOpacity(0.7);
 
-window.onClose = function () {
+window.onDestroy = function () {
   console.log(window.getOpacity());
   console.log(window.getPosition());
   console.log(window.getSize());

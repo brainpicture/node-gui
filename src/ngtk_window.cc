@@ -31,11 +31,11 @@ Handle<Value> Window::New (const Arguments &args) {
   Window *window = new Window();
   window->Wrap(args.This());
 
-  // Add the onClose handler
+  // Add the onDestroy handler
   Persistent<Object> *self = new Persistent<Object>();
   *self = Persistent<Object>::New(args.This());
 
-  g_signal_connect(G_OBJECT(window->widget_), "destroy", G_CALLBACK(Window::onClose), (gpointer) self);
+  g_signal_connect(G_OBJECT(window->widget_), "destroy", G_CALLBACK(Window::onDestroy), (gpointer) self);
 
   return args.This();
 }
@@ -242,18 +242,6 @@ Handle<Value> Window::GetOpacity (const Arguments &args) {
   return scope.Close(Number::New(gtk_window_get_opacity(GTK_WINDOW(window))));
 }
 
-// onClose() - Called when the window is being destoyed.
-void Window::onClose (GtkWidget *widget, gpointer dataCast) {
-  Persistent<Object>   *self    = reinterpret_cast<Persistent<Object>*>(dataCast);
-  v8::Handle<v8::Value> onClose = (*self)->Get(String::New("onClose"));
-
-  if (onClose->IsFunction()) {
-    Handle<Function>::Cast(onClose)->Call(*self, 0, NULL);
-  }
-
-  main_loop_level--;
-}
-
 // Export.
 void Window::Initialize (Handle<Object> target) {
   HandleScope scope;
@@ -262,13 +250,6 @@ void Window::Initialize (Handle<Object> target) {
   constructor_template = Persistent<FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Window"));
-
-  // Position constants.
-  NGTK_DEFINE_CONSTANT(target, "WIN_POS_NONE",             GTK_WIN_POS_NONE);
-  NGTK_DEFINE_CONSTANT(target, "WIN_POS_CENTER",           GTK_WIN_POS_CENTER);
-  NGTK_DEFINE_CONSTANT(target, "WIN_POS_MOUSE",            GTK_WIN_POS_MOUSE);
-  NGTK_DEFINE_CONSTANT(target, "WIN_POS_CENTER_ALWAYS",    GTK_WIN_POS_CENTER_ALWAYS);
-  NGTK_DEFINE_CONSTANT(target, "WIN_POS_CENTER_ON_PARENT", GTK_WIN_POS_CENTER_ON_PARENT);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setTitle",       Window::SetTitle);

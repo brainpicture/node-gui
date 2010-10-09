@@ -15,6 +15,7 @@ public:
   static GtkWidget* Gtk (v8::Handle<v8::Object> obj);
 
 protected:
+  static void onDestroy (GtkWidget *widget, gpointer dataCast);
   GtkWidget *widget_;
 };
 
