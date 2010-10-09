@@ -14,15 +14,16 @@ def configure(conf):
 		'-DNDEBUG -DGTK -DGTK2 -DSCI_LEXER -DG_THREADS_IMPL_NONE'.split())
 
 def build(bld):
-  obj = bld.new_task_gen("cxx", "shlib", "pthread", "node_addon",uselib = 'GTK')
-  obj.packages='gtk+-2.0'
+  obj = bld.new_task_gen("cxx", "shlib", "pthread", "node_addon", uselib = 'GTK')
+  obj.cxxflags = ["-Wall", "-ansi", "-pedantic"]
+  obj.packages = 'gtk+-2.0'
   obj.target = "node-gtk"
   obj.source = """
-	       bindings/gtk-window.cc
-	       bindings/gtk-hbox.cc
-	       bindings/gtk-vbox.cc
-	       bindings/gtk-button.cc
-	       bindings/gtk-alert.cc
-	       bindings/gtk-entry.cc
-  	       bindings/gtk.cc
+	       src/gtk-window.cc
+	       src/gtk-hbox.cc
+	       src/gtk-vbox.cc
+	       src/gtk-button.cc
+	       src/gtk-alert.cc
+	       src/gtk-entry.cc
+         src/gtk.cc
   	       """

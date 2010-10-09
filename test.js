@@ -18,7 +18,7 @@ var wnd = gui.window({
 			}),
 			gui.button({
 				title: 'право',
-				on_click: function() {
+				onClick: function() {
 					gui.alert('wow');
 				}
 			})
@@ -28,7 +28,7 @@ var wnd = gui.window({
 		}),
 		gui.entry({text:'Hai'})
 	],
-	on_close: function() {
+	onClose: function() {
 		gui.alert('Good bie!');
 	}
 }).show();
