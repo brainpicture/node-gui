@@ -4,8 +4,6 @@
 #include <gtk/gtk.h>
 #include "ngtk.h"
 
-#include <stdio.h>
-
 namespace ngtk {
 
 using namespace v8;
@@ -42,10 +40,8 @@ Handle<Value> MessageDialog::New (const Arguments &args) {
   dialog->Wrap(args.This());
 
   // Add the onDestroy handler
-  Persistent<Object> *self = new Persistent<Object>();
-  *self = Persistent<Object>::New(args.This());
-
-  g_signal_connect(G_OBJECT(dialog->widget_), "destroy", G_CALLBACK(MessageDialog::onDestroy), (gpointer) self);
+  g_signal_connect(G_OBJECT(dialog->widget_), "destroy", G_CALLBACK(MessageDialog::onDestroy),
+      (gpointer) &dialog->handle_);
 
   return args.This();
 }

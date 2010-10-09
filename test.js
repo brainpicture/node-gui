@@ -10,12 +10,21 @@ exports.main = function() {
 
 var window = new gtk.Window();
 
+var button = new gtk.Button();
+button.setLabel('Test Button');
+
+button.onClick = function () {
+  console.log('clicked');
+};
+
+window.add(button);
+
 window.onShow = exports.main;
 window.setTitle('Node');
 window.setResizable(true);
 window.setDefaultSize();
 window.setPosition();
-window.setOpacity(0.7);
+window.setOpacity(0.9);
 
 var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
                      gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO, "Testing");

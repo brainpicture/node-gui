@@ -1,3 +1,6 @@
+#ifndef NGTK_H_
+#define NGTK_H_
+
 #include <v8.h>
 
 namespace ngtk {
@@ -25,3 +28,5 @@ do {                                                                      \
 extern int main_loop_level;
 
 } // namespace ngtk
+
+#endif

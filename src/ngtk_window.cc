@@ -4,8 +4,6 @@
 #include <gtk/gtk.h>
 #include "ngtk.h"
 
-#include <stdio.h>
-
 namespace ngtk {
 
 using namespace v8;
@@ -32,10 +30,8 @@ Handle<Value> Window::New (const Arguments &args) {
   window->Wrap(args.This());
 
   // Add the onDestroy handler
-  Persistent<Object> *self = new Persistent<Object>();
-  *self = Persistent<Object>::New(args.This());
-
-  g_signal_connect(G_OBJECT(window->widget_), "destroy", G_CALLBACK(Window::onDestroy), (gpointer) self);
+  g_signal_connect(G_OBJECT(window->widget_), "destroy", G_CALLBACK(Window::onDestroy),
+      (gpointer) &window->handle_);
 
   return args.This();
 }
@@ -258,6 +254,7 @@ void Window::Initialize (Handle<Object> target) {
   constructor_template->SetClassName(String::NewSymbol("Window"));
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setTitle",       Window::SetTitle);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getTitle",       Window::GetTitle);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setResizable",   Window::SetResizable);

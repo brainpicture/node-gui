@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 #include "ngtk_window.h"
 #include "ngtk_message_dialog.h"
+#include "ngtk_button.h"
 
 namespace ngtk {
 
@@ -67,6 +68,7 @@ extern "C" void init (Handle<Object> target) {
 
   Window::Initialize(target);
   MessageDialog::Initialize(target);
+  Button::Initialize(target);
 
   NGTK_SET_METHOD(target, "main", MainIteration);
 }
