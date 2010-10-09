@@ -1,5 +1,7 @@
 all:
 	node-waf configure build
+pre:
+	node-waf configure prebuild
 tests:
 	node ./test.js
 install:

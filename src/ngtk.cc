@@ -25,6 +25,8 @@ extern "C" void init (Handle<Object> target) {
   gtk_init(NULL, NULL);
 
   Window::Initialize(target);
+
+  NGTK_SET_METHOD(target, "main", MainIteration);
 }
 
 } // namespace ngtk

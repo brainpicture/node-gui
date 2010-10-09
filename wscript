@@ -13,7 +13,7 @@ def configure(conf):
   conf.env.append_value('CXXFLAGS', 
 		'-DNDEBUG -DGTK -DGTK2 -DSCI_LEXER -DG_THREADS_IMPL_NONE'.split())
 
-def build(bld):
+def oldbuild(bld):
   obj = bld.new_task_gen("cxx", "shlib", "pthread", "node_addon", uselib = 'GTK')
   obj.cxxflags = ["-Wall", "-ansi", "-pedantic"]
   obj.packages = 'gtk+-2.0'
@@ -27,3 +27,14 @@ def build(bld):
 	       src/gtk-entry.cc
          src/gtk.cc
   	       """
+
+def build(bld):
+  obj = bld.new_task_gen("cxx", "shlib", "node_addon", uselib = 'GTK')
+  obj.cxxflags = ["-Wall", "-ansi", "-pedantic"]
+  obj.packages = 'gtk+-2.0'
+  obj.target = "node-gtk"
+  obj.source = """
+               src/ngtk_widget.cc
+               src/ngtk_window.cc
+               src/ngtk.cc
+               """

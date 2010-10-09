@@ -1,16 +1,27 @@
-var gtk = require('./gtk');
+var gtk = require('./build/default/node-gtk');
 
-//var win = new gtk.Window({
-  //title: "Test"
-//});
+exports.main = function() {
+  if (!gtk.main()) setTimeout(function() {
+    exports.main();
+  },20);
+};
 
-//win.on('show', function () {
-  //win.widget.setTitle('test');
-  //console.log(win.widget);
-//});
+var window = new gtk.Window();
 
-//win.show();
+window.onShow = exports.main;
+window.setTitle('Node');
+window.setResizable(true);
+window.setDefaultSize();
+window.setPosition();
+window.setOpacity(0.7);
 
-var win = gtk.window();
+window.onClose = function () {
+  console.log(window.getOpacity());
+  console.log(window.getPosition());
+  console.log(window.getSize());
+  console.log(window.getResizable(true));
+  console.log(window.getTitle());
+  console.log('OMG');
+};
 
-console.log(win);
+window.show();
