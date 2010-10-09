@@ -1,34 +1,16 @@
-var gui=require('./gtk');
-var sys=require('sys');
+var gtk = require('./gtk');
 
-var wnd = gui.window({
-	title: 'Тестовое приложение',
-	width: 600,
-	height: 400,
-	opacity: 0.7,
-	resizable: true,
-	position: 1,
-	items: [
-		gui.button({
-			title: 'шапка',
-		}),
-		gui.h([
-			gui.button({
-				title: 'лево',
-			}),
-			gui.button({
-				title: 'право',
-				onClick: function() {
-					gui.alert('wow');
-				}
-			})
-		]),
-		gui.button({
-			title: 'футер',
-		}),
-		gui.entry({text:'Hai'})
-	],
-	onClose: function() {
-		gui.alert('Good bie!');
-	}
-}).show();
+//var win = new gtk.Window({
+  //title: "Test"
+//});
+
+//win.on('show', function () {
+  //win.widget.setTitle('test');
+  //console.log(win.widget);
+//});
+
+//win.show();
+
+var win = gtk.window();
+
+console.log(win);

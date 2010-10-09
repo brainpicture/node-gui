@@ -4,8 +4,8 @@
 #include <gtk/gtkenums.h>
 #include "gtk-node.h"
 
-#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 using namespace v8;
 
 /**
@@ -46,6 +46,19 @@ Handle<Value> WindowSetTitle (const Arguments& args) {
   gtk_window_set_title(GTK_WINDOW(wnd), *title);
 
   return args.This();
+}
+
+// Get the window title.
+Handle<Value> WindowGetTitle (const Arguments& args) {
+  HandleScope scope;
+
+  //GtkWidget *wnd;
+  //GTKNODE_GET_HANDLE(wnd, args.This());
+
+  //printf("%s\n", gtk_window_get_title(GTK_WINDOW(wnd)));
+
+  //return scope.Close(String::New(gtk_window_get_title(GTK_WINDOW(wnd))));
+  return scope.Close(args.This());
 }
 
 /**
@@ -151,6 +164,26 @@ Handle<Value> WindowSetPosition (const Arguments& args) {
   return args.This();
 }
 
+// gtk_window_get_position(GtkWindow, gint x, gint y)
+// returns void
+Handle<Value> WindowGetPosition (const Arguments& args) {
+  HandleScope scope;
+
+  GtkWidget *wnd;
+  GTKNODE_GET_HANDLE(wnd, args.This());
+
+  gint *x = 0;
+  gint *y = 0;
+
+  gtk_window_get_position(GTK_WINDOW(wnd), x, y);
+
+  Local<Array> ret = Array::New(2);
+  ret->Set(0, Integer::New(*x));
+  ret->Set(1, Integer::New(*y));
+
+  return scope.Close(ret);
+}
+
 /**
    This method sets the opacity of the window.
 */
@@ -195,6 +228,18 @@ Handle<Value> WindowSetResizable (const Arguments& args) {
   gtk_window_set_resizable(GTK_WINDOW(wnd), resizable);
 
   return args.This();
+}
+
+// gtk_window_get_resizable(GtkWindow)
+// returns gboolean
+Handle<Value> WindowGetResizable (const Arguments& args) {
+  HandleScope scope;
+
+  GtkWidget *wnd;
+  GTKNODE_GET_HANDLE(wnd, args.This());
+
+  return scope.Close(Boolean::New(
+        gtk_window_get_resizable(GTK_WINDOW(wnd))));
 }
 
 /**
@@ -252,7 +297,7 @@ Handle<Value> WindowOnClose (const Arguments& args) {
 }
 
 /**
-   Baser window object. This provides JS level method access and returns a window object.
+   Base window object. This provides JS level method access and returns a window object.
  */
 Handle<Value> Window (const Arguments& args) {
   HandleScope scope;
@@ -260,17 +305,19 @@ Handle<Value> Window (const Arguments& args) {
   Local<Object> windowObject = Object::New();
 
   GtkWidget *wnd = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  Local<Object> params = args[0]->ToObject();
 
   windowObject->Set(String::New("handle"),             v8::External::New(wnd));
 
   windowObject->Set(String::New("show"),               FunctionTemplate::New(WindowShow)->GetFunction());
   windowObject->Set(String::New("setTitle"),           FunctionTemplate::New(WindowSetTitle)->GetFunction());
+  windowObject->Set(String::New("getTitle"),           FunctionTemplate::New(WindowGetTitle)->GetFunction());
   windowObject->Set(String::New("setSize"),            FunctionTemplate::New(WindowSetSize)->GetFunction());
   windowObject->Set(String::New("setFrameDimensions"), FunctionTemplate::New(WindowSetFrameDimensions)->GetFunction());
   windowObject->Set(String::New("setPosition"),        FunctionTemplate::New(WindowSetPosition)->GetFunction());
+  windowObject->Set(String::New("getPosition"),        FunctionTemplate::New(WindowGetPosition)->GetFunction());
   windowObject->Set(String::New("setOpacity"),         FunctionTemplate::New(WindowSetOpacity)->GetFunction());
   windowObject->Set(String::New("setResizable"),       FunctionTemplate::New(WindowSetResizable)->GetFunction());
+  windowObject->Set(String::New("getResizable"),       FunctionTemplate::New(WindowGetResizable)->GetFunction());
   windowObject->Set(String::New("add"),                FunctionTemplate::New(WindowAdd)->GetFunction());
   windowObject->Set(String::New("onClose"),            FunctionTemplate::New(WindowOnClose)->GetFunction());
 
