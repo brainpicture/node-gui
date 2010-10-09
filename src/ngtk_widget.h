@@ -11,12 +11,25 @@ namespace ngtk {
 
 class Widget : public node::ObjectWrap {
 public:
-  ~Widget();
-  static GtkWidget* Gtk (v8::Handle<v8::Object> obj);
+  // For getting the underlying GtkWidget
+  static inline GtkWidget* Gtk (v8::Handle<v8::Object> obj) {
+    v8::HandleScope scope;
+
+    return node::ObjectWrap::Unwrap<Widget>(obj)->widget_;
+  }
+
+  GtkWidget *widget_;
 
 protected:
-  static void onDestroy (GtkWidget *widget, gpointer dataCast);
-  GtkWidget *widget_;
+  // onDestroy() - Called when the window is being destoyed.
+  static inline void onDestroy (GtkWidget *widget, gpointer dataCast) {
+    v8::Persistent<v8::Object> *self      = reinterpret_cast<v8::Persistent<v8::Object>*>(dataCast);
+    v8::Handle<v8::Value>       onDestroy = (*self)->Get(v8::String::New("onDestroy"));
+
+    if (onDestroy->IsFunction()) {
+      v8::Handle<v8::Function>::Cast(onDestroy)->Call(*self, 0, NULL);
+    }
+  }
 };
 
 } // namespace ngtk

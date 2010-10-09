@@ -19,7 +19,6 @@ def build(bld):
   obj.packages = 'gtk+-2.0'
   obj.target = "gtk"
   obj.source = """
-               src/ngtk_widget.cc
                src/ngtk_window.cc
                src/ngtk_message_dialog.cc
                src/ngtk.cc

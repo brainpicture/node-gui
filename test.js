@@ -1,4 +1,6 @@
-var gtk = require('./build/default/node-gtk');
+var gtk = require('./build/default/gtk');
+
+console.log(gtk);
 
 exports.main = function() {
   if (!gtk.main()) setTimeout(function() {
@@ -15,6 +17,9 @@ window.setDefaultSize();
 window.setPosition();
 window.setOpacity(0.7);
 
+var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                     gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO, "Testing");
+
 window.onDestroy = function () {
   console.log(window.getOpacity());
   console.log(window.getPosition());
@@ -25,3 +30,5 @@ window.onDestroy = function () {
 };
 
 window.show();
+dialog.run();
+dialog.destroy();

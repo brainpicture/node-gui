@@ -52,8 +52,7 @@ Handle<Value> Window::Add (const Arguments &args) {
   GtkWidget *window = Widget::Gtk(args.This());
 
   // TODO: Check arg is an instance of Widget
-  Local<Object> arg = args[0]->ToObject();
-  GtkWidget *other  = Widget::Gtk(arg);
+  GtkWidget *other = Widget::Gtk(args[0]->ToObject());
 
   gtk_container_add(GTK_CONTAINER(window), other);
   gtk_widget_show(other);
@@ -240,6 +239,13 @@ Handle<Value> Window::GetOpacity (const Arguments &args) {
   GtkWidget *window = Widget::Gtk(args.This());
 
   return scope.Close(Number::New(gtk_window_get_opacity(GTK_WINDOW(window))));
+}
+
+// Window destroys need to decrement the main_loop_level
+void Window::onDestroy (GtkWidget *widget, gpointer dataCast) {
+  Widget::onDestroy(widget, dataCast);
+
+  main_loop_level--;
 }
 
 // Export.
