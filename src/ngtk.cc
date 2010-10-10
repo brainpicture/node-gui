@@ -120,7 +120,6 @@ extern "C" void init(Handle<Object> target) {
   HandleScope scope;
 
   GMainContext *gc     = g_main_context_default();
-
   struct econtext *ctx = &default_context;
 
   ctx->gc  = g_main_context_ref(gc);
@@ -140,6 +139,7 @@ extern "C" void init(Handle<Object> target) {
   ev_init (&ctx->tw, timer_cb);
   ev_set_priority (&ctx->tw, EV_MINPRI);
 
+  // Have to init here, otherwise we segfault :/
   gtk_init(NULL, NULL);
 
   // Position constants.
