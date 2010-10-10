@@ -39,11 +39,9 @@ Entry::Entry (void) {
 Handle<Value> Entry::SetText (const Arguments &args) {
   HandleScope scope;
 
-  if (args[0]->IsString()) {
-    GtkWidget *entry = Entry::Data(args.This());
+  GtkWidget *entry = Entry::Data(args.This());
 
-    gtk_entry_set_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
-  }
+  gtk_entry_set_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
 
   return args.This();
 }
@@ -61,11 +59,9 @@ Handle<Value> Entry::GetText (const Arguments &args) {
 Handle<Value> Entry::AppendText (const Arguments &args) {
   HandleScope scope;
 
-  if (args[0]->IsString()) {
-    GtkWidget *entry = Entry::Data(args.This());
+  GtkWidget *entry = Entry::Data(args.This());
 
-    gtk_entry_append_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
-  }
+  gtk_entry_append_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
 
   return args.This();
 }
@@ -74,11 +70,9 @@ Handle<Value> Entry::AppendText (const Arguments &args) {
 Handle<Value> Entry::PrependText (const Arguments &args) {
   HandleScope scope;
 
-  if (args[0]->IsString()) {
-    GtkWidget *entry = Entry::Data(args.This());
+  GtkWidget *entry = Entry::Data(args.This());
 
-    gtk_entry_prepend_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
-  }
+  gtk_entry_prepend_text(GTK_ENTRY(entry), *String::Utf8Value(args[0]->ToString()));
 
   return args.This();
 }

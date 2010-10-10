@@ -206,9 +206,7 @@ Handle<Value> Window::SetOpacity (const Arguments &args) {
   if (args[0]->IsNumber()) {
     GtkWidget *window = Window::Data(args.This());
 
-    gdouble opacity = args[0]->NumberValue();
-
-    gtk_window_set_opacity(GTK_WINDOW(window), opacity);
+    gtk_window_set_opacity(GTK_WINDOW(window), args[0]->NumberValue());
   }
 
   return args.This();

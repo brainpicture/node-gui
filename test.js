@@ -1,40 +1,52 @@
+console.log('test.js');
 var gtk = require('./build/default/gtk');
+var fs  = require('fs');
 
-var loop = new gtk.Loop();
+process.nextTick(function () {
+  //gtk.gtkInit();
 
-var window = new gtk.Window();
-var entry  = new gtk.Entry();
+  var window = new gtk.Window();
+  var entry  = new gtk.Entry();
 
-entry.setText('A teeheehee!');
-entry.setVisibility(false);
+  entry.setText('A teeheehee!');
+  entry.setVisibility(true);
 
-//var button = new gtk.Button();
-//button.setLabel('Test Button');
+  entry.on('changed', function () {
+    setTimeout(function () {
+      console.log(entry);
+    }, 2000);
+    console.log('changed');
+  });
 
-//button.on('clicked', function () {
-  //console.log('clicked');
-  //var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
-                       //gtk.MESSAGE_INFO);
-  //dialog.show();
-//});
+  var button = new gtk.Button();
+  button.setLabel('Test Button');
 
-//window.add(button);
-window.add(entry);
+  button.on('clicked', function () {
+    console.log('clicked');
+    var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                         gtk.MESSAGE_INFO, gtk.BUTTONS_OK);
+    dialog.show();
+  });
 
-window.setTitle('Node');
-window.setResizable(true);
-window.setDefaultSize();
+  //window.add(button);
+  window.add(entry);
 
-window.on('destroy', function () {
-  console.log(window.getOpacity());
-  console.log(window.getPosition());
-  console.log(window.getSize());
-  console.log(window.getResizable(true));
-  console.log(window.getTitle());
-  console.log('OMG');
-  loop.quit();
+  window.setTitle('Node');
+  window.setResizable(true);
+  window.setDefaultSize();
+
+  window.on('destroy', function () {
+    console.log(window.getOpacity());
+    console.log(window.getPosition());
+    console.log(window.getSize());
+    console.log(window.getResizable(true));
+    console.log(window.getTitle());
+    console.log('OMG');
+    //loop.quit();
+  });
+
+  window.show();
 });
-
-window.show();
-
-loop.run();
+setInterval(function () {
+  console.log('hi');
+}, 1000);

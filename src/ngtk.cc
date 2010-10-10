@@ -30,14 +30,17 @@ struct econtext {
 };
 
 static void timer_cb (EV_P_ ev_timer *w, int revents) {
+  printf("%s\n", "timer_cd");
   /* nop */
 }
 
 static void io_cb (EV_P_ ev_io *w, int revents) {
+  printf("%s\n", "io_cd");
   /* nop */
 }
 
 static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
+  printf("%s\n", "prepare_cb");
   struct econtext *ctx = (struct econtext *)(((char *)w) - offsetof (struct econtext, pw));
   gint timeout;
   int i;
@@ -47,11 +50,13 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
   g_main_context_prepare (ctx->gc, &ctx->maxpri);
 
   while (ctx->afd < (ctx->nfd = g_main_context_query  (
-                      ctx->gc,
-                      ctx->maxpri,
-                      &timeout,
-                      ctx->pfd,
-                      ctx->afd))) {
+          ctx->gc,
+          ctx->maxpri,
+          &timeout,
+          ctx->pfd,
+          ctx->afd))
+      )
+  {
     free (ctx->pfd);
     free (ctx->iow);
 
@@ -59,55 +64,57 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
     while (ctx->afd < ctx->nfd)
       ctx->afd <<= 1;
 
-    ctx->pfd = (GPollFD*)malloc (ctx->afd * sizeof (GPollFD));
-    ctx->iow = (ev_io*)malloc (ctx->afd * sizeof (ev_io));
+    ctx->pfd = (GPollFD*) malloc (ctx->afd * sizeof (GPollFD));
+    ctx->iow = (ev_io*) malloc (ctx->afd * sizeof (ev_io));
   }
 
-  for (i = 0; i < ctx->nfd; ++i) {
-      GPollFD *pfd = ctx->pfd + i;
-      ev_io *iow = ctx->iow + i;
+  for (i = 0; i < ctx->nfd; ++i)
+  {
+    GPollFD *pfd = ctx->pfd + i;
+    ev_io *iow = ctx->iow + i;
 
-      pfd->revents = 0;
+    pfd->revents = 0;
 
-      ev_io_init (
+    ev_io_init (
         iow,
         io_cb,
         pfd->fd,
         (pfd->events & G_IO_IN ? EV_READ : 0)
-         | (pfd->events & G_IO_OUT ? EV_WRITE : 0)
-      );
-      iow->data = (void *)pfd;
-      ev_set_priority (iow, EV_MINPRI);
-      ev_io_start (EV_A iow);
-    }
+        | (pfd->events & G_IO_OUT ? EV_WRITE : 0)
+        );
+    iow->data = (void *)pfd;
+    ev_set_priority (iow, EV_MINPRI);
+    ev_io_start (EV_A iow);
+  }
 
   if (timeout >= 0)
-    {
-      ev_timer_set (&ctx->tw, timeout * 1e-3, 0.);
-      ev_timer_start (EV_A &ctx->tw);
-    }
+  {
+    ev_timer_set (&ctx->tw, timeout * 1e-3, 0.);
+    ev_timer_start (EV_A &ctx->tw);
+  }
 }
 
 static void check_cb (EV_P_ ev_check *w, int revents) {
+  printf("%s\n", "check_cb");
   struct econtext *ctx = (struct econtext *)(((char *)w) - offsetof (struct econtext, cw));
   int i;
 
   for (i = 0; i < ctx->nfd; ++i)
+  {
+    ev_io *iow = ctx->iow + i;
+
+    if (ev_is_pending (iow))
     {
-      ev_io *iow = ctx->iow + i;
+      GPollFD *pfd = ctx->pfd + i;
+      int revents = ev_clear_pending (EV_A iow);
 
-      if (ev_is_pending (iow))
-        {
-          GPollFD *pfd = ctx->pfd + i;
-          int revents = ev_clear_pending (EV_A iow);
-
-          pfd->revents |= pfd->events &
-            ((revents & EV_READ ? G_IO_IN : 0)
-             | (revents & EV_WRITE ? G_IO_OUT : 0));
-        }
-
-      ev_io_stop (EV_A iow);
+      pfd->revents |= pfd->events &
+        ((revents & EV_READ ? G_IO_IN : 0)
+         | (revents & EV_WRITE ? G_IO_OUT : 0));
     }
+
+    ev_io_stop (EV_A iow);
+  }
 
   if (ev_is_active (&ctx->tw))
     ev_timer_stop (EV_A &ctx->tw);
@@ -117,31 +124,18 @@ static void check_cb (EV_P_ ev_check *w, int revents) {
 
 static struct econtext default_context;
 
+//static Handle<Value> GtkInit (const Arguments &args) {
+  //HandleScope scope;
+
+  //gtk_init(NULL, NULL);
+
+  //return Undefined();
+//}
+
 extern "C" void init(Handle<Object> target) {
   HandleScope scope;
 
-  GMainContext *gc     = g_main_context_default();
-  struct econtext *ctx = &default_context;
-
-  ctx->gc  = g_main_context_ref(gc);
-  ctx->nfd = 0;
-  ctx->afd = 0;
-  ctx->iow = 0;
-  ctx->pfd = 0;
-
-  ev_prepare_init (&ctx->pw, prepare_cb);
-  ev_set_priority (&ctx->pw, EV_MINPRI);
-  ev_prepare_start (EV_DEFAULT_ &ctx->pw);
-
-  ev_check_init (&ctx->cw, check_cb);
-  ev_set_priority (&ctx->cw, EV_MAXPRI);
-  ev_check_start (EV_DEFAULT_ &ctx->cw);
-
-  ev_init (&ctx->tw, timer_cb);
-  ev_set_priority (&ctx->tw, EV_MINPRI);
-
-  // Have to init here, otherwise we segfault :/
-  gtk_init(NULL, NULL);
+  printf("%s\n", "init");
 
   // Position constants.
   NGTK_DEFINE_CONSTANT(target, "WIN_POS_NONE",             GTK_WIN_POS_NONE);
@@ -188,7 +182,34 @@ extern "C" void init(Handle<Object> target) {
   Button::Initialize(target);
   Entry::Initialize(target);
 
-  Loop::Initialize(target);
+  //Loop::Initialize(target);
+
+  gtk_init(NULL, NULL);
+
+  GMainContext *gc     = g_main_context_default();
+  struct econtext *ctx = &default_context;
+
+  ctx->gc  = g_main_context_ref(gc);
+  ctx->nfd = 0;
+  ctx->afd = 0;
+  ctx->iow = 0;
+  ctx->pfd = 0;
+
+  ev_prepare_init (&ctx->pw, prepare_cb);
+  ev_set_priority (&ctx->pw, EV_MINPRI);
+  ev_prepare_start (EV_DEFAULT_UC_ &ctx->pw);
+  ev_unref(EV_DEFAULT_UC);
+
+  ev_check_init (&ctx->cw, check_cb);
+  ev_set_priority (&ctx->cw, EV_MAXPRI);
+  ev_check_start (EV_DEFAULT_ &ctx->cw);
+  ev_unref(EV_DEFAULT_UC);
+
+  ev_init (&ctx->tw, timer_cb);
+  ev_set_priority (&ctx->tw, EV_MINPRI);
+
+
+  printf("%s\n", "init done");
 }
 
 } // namespace ngtk
