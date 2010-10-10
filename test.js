@@ -1,25 +1,17 @@
 var gtk = require('./build/default/gtk');
 
-console.log(gtk);
-
-exports.main = function() {
-  if (!gtk.main()) setTimeout(function() {
-    exports.main();
-  },20);
-};
-
 var window = new gtk.Window();
 
 var button = new gtk.Button();
 button.setLabel('Test Button');
 
 button.on('clicked', function () {
+  console.log(gtk.depth());
   console.log('clicked');
 });
 
 window.add(button);
 
-window.onShow = exports.main;
 window.setTitle('Node');
 window.setResizable(true);
 window.setDefaultSize();
@@ -30,15 +22,16 @@ var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
                      gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO, "Testing");
 
 window.on('destroy', function () {
-  gtk.decrementLoopLevel();
   console.log(window.getOpacity());
   console.log(window.getPosition());
   console.log(window.getSize());
   console.log(window.getResizable(true));
   console.log(window.getTitle());
   console.log('OMG');
+  gtk.quit();
 });
 
 window.show();
-dialog.run();
-dialog.destroy();
+dialog.show();
+
+gtk.run();

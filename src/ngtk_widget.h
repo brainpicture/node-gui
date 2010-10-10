@@ -3,9 +3,11 @@
 
 #include <v8.h>
 
-#include "ngtk.h"
 #include <gtk/gtk.h>          // GtkWidget
+//#include <gtkmm.h>          // Maybe use this later
 #include <node_object_wrap.h> // node::ObjectWrap
+
+#include "ngtk.h"
 
 namespace ngtk {
 
@@ -16,6 +18,7 @@ public:
     v8::HandleScope scope;
 
     NGTK_SET_PROTOTYPE_METHOD(constructor_template, "on",      Widget::On);
+    NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",    Widget::Show);
     NGTK_SET_PROTOTYPE_METHOD(constructor_template, "destroy", Widget::Destroy);
   }
 
@@ -42,6 +45,18 @@ private:
       g_signal_connect(G_OBJECT(widget), *v8::String::Utf8Value(args[0]->ToString()),
           G_CALLBACK(onSignal), (gpointer) callback);
     }
+
+    return args.This();
+  }
+
+  // Show()
+  // For showing the widget.
+  static inline v8::Handle<v8::Value> Show (const v8::Arguments &args) {
+    v8::HandleScope scope;
+
+    GtkWidget *widget = Widget::Gtk(args.This());
+
+    gtk_widget_show_all(widget);
 
     return args.This();
   }

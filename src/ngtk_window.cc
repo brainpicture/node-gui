@@ -52,28 +52,6 @@ Handle<Value> Window::Add (const Arguments &args) {
   return args.This();
 }
 
-// Show()
-// For showing the window.
-Handle<Value> Window::Show (const Arguments &args) {
-  HandleScope scope;
-
-  GtkWidget *window = Widget::Gtk(args.This());
-
-  gtk_widget_show_all(window);
-
-  main_loop_level++;
-
-  if (main_loop_level == 1) {
-    Handle<Value> onShow = args.This()->Get(String::New("onShow"));
-
-    if (onShow->IsFunction()) {
-      v8::Handle<v8::Function>::Cast(onShow)->Call(args.This(), 0, NULL);
-    }
-  }
-
-  return args.This();
-}
-
 // SetTitle()
 // For setting the window title.
 Handle<Value> Window::SetTitle (const Arguments &args) {
@@ -244,7 +222,6 @@ void Window::Initialize (Handle<Object> target) {
 
   Widget::Initialize(constructor_template);
 
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setTitle",       Window::SetTitle);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getTitle",       Window::GetTitle);

@@ -19,7 +19,6 @@ private:
 
   static v8::Handle<v8::Value> New            (const v8::Arguments &args);
   static v8::Handle<v8::Value> Add            (const v8::Arguments &args);
-  static v8::Handle<v8::Value> Show           (const v8::Arguments &args);
   // gtk_window_*_title()
   static v8::Handle<v8::Value> SetTitle       (const v8::Arguments &args);
   static v8::Handle<v8::Value> GetTitle       (const v8::Arguments &args);

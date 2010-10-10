@@ -25,7 +25,6 @@ do {                                                                      \
 } while (0)
 
 //global var
-extern int main_loop_level;
 
 } // namespace ngtk
 

@@ -1,40 +1,188 @@
-#include "ngtk.h"
 #include <v8.h>
 
+#include <ev.h>
+#include <glib.h>
+#include <glibmm.h>
 #include <gtk/gtk.h>
+#include <stdlib.h> // malloc, free
+
+#include "ngtk.h"
 #include "ngtk_window.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"
 
-namespace ngtk {
-
 using namespace v8;
+using namespace ngtk;
 
-//global var
-int main_loop_level = 0;
+static Glib::RefPtr<Glib::MainLoop> gMainLoop;
 
-Handle<Value> MainIteration(const Arguments& args) {
-  HandleScope scope;
+struct econtext {
+  GPollFD* pfd;
+  ev_io* iow;
+  int nfd, afd;
+  gint maxpri;
 
-  while (gtk_events_pending()) {
-    gtk_main_iteration();
+  ev_prepare pw;
+  ev_check cw;
+  ev_timer tw;
+
+  GMainContext* gc;
+};
+
+static void timer_cb(EV_P_ ev_timer* w, int revents) {
+  /* nop */
+}
+
+static void io_cb(EV_P_ ev_io* w, int revents) {
+  /* nop */
+}
+
+static void prepare_cb(EV_P_ ev_prepare* w, int revents) {
+  struct econtext* ctx = (struct econtext*)(((char*)w) - offsetof(struct econtext, pw));
+  gint timeout;
+  int i;
+
+  g_main_context_dispatch(ctx->gc);
+
+  g_main_context_prepare(ctx->gc, &ctx->maxpri);
+
+  ctx->nfd = g_main_context_query(ctx->gc, ctx->maxpri, &timeout, ctx->pfd, ctx->afd);
+  while (ctx->afd < ctx->nfd) {
+    free(ctx->pfd);
+    free(ctx->iow);
+
+    ctx->afd = 1;
+
+    while (ctx->afd < ctx->nfd) {
+      ctx->afd <<= 1;
+    }
+
+    ctx->pfd = (GPollFD*)malloc(ctx->afd * sizeof(GPollFD));
+    ctx->iow = (ev_io*)malloc(ctx->afd * sizeof(ev_io));
   }
 
-  return scope.Close(Boolean::New(main_loop_level == 0));
+  for (i = 0; i < ctx->nfd; ++i) {
+    GPollFD* pfd = ctx->pfd + i;
+    ev_io* iow = ctx->iow + i;
+
+    pfd->revents = 0;
+
+    ev_io_init(
+        iow,
+        io_cb,
+        pfd->fd,
+        (pfd->events & G_IO_IN ? EV_READ : 0)
+        | (pfd->events & G_IO_OUT ? EV_WRITE : 0)
+        );
+    iow->data = (void*)pfd;
+    ev_set_priority(iow, EV_MINPRI);
+    ev_io_start(EV_A iow);
+  }
+
+  if (timeout >= 0) {
+    ev_timer_set(&ctx->tw, timeout * 1e-3, 0.);
+    ev_timer_start(EV_A &ctx->tw);
+  }
 }
 
-Handle<Value> DecrementLoopLevel (const Arguments &args) {
+static void check_cb(EV_P_ ev_check* w, int revents) {
+  struct econtext* ctx = (struct econtext*)(((char*)w) - offsetof(struct econtext, cw));
+  int i;
+
+  for (i = 0; i < ctx->nfd; ++i) {
+    ev_io* iow = ctx->iow + i;
+
+    if (ev_is_pending(iow)) {
+      GPollFD* pfd = ctx->pfd + i;
+      int revents = ev_clear_pending(EV_A iow);
+
+      pfd->revents |= pfd->events &
+        ((revents & EV_READ ? G_IO_IN : 0)
+         | (revents & EV_WRITE ? G_IO_OUT : 0));
+    }
+
+    ev_io_stop(EV_A iow);
+  }
+
+  if (ev_is_active(&ctx->tw)) {
+    ev_timer_stop(EV_A &ctx->tw);
+  }
+
+  g_main_context_check(ctx->gc, ctx->maxpri, ctx->pfd, ctx->nfd);
+}
+
+static struct econtext default_context;
+
+Handle<Value> Run (const Arguments &args) {
   HandleScope scope;
 
-  main_loop_level--;
+  gMainLoop->run();
 
-  return scope.Close(Number::New(main_loop_level));
+  return Undefined();
 }
 
-extern "C" void init (Handle<Object> target) {
+Handle<Value> Quit (const Arguments &args) {
+  HandleScope scope;
+
+  gMainLoop->quit();
+
+  return Undefined();
+}
+
+Handle<Value> IsRunning (const Arguments &args) {
+  HandleScope scope;
+
+  return scope.Close(Boolean::New(gMainLoop->is_running()));
+}
+
+Handle<Value> Depth (const Arguments &args) {
+  HandleScope scope;
+
+  return scope.Close(Number::New(gMainLoop->depth()));
+}
+
+Handle<Value> Reference (const Arguments &args) {
+  HandleScope scope;
+
+  gMainLoop->reference();
+
+  return Undefined();
+}
+
+Handle<Value> UnReference (const Arguments &args) {
+  HandleScope scope;
+
+  gMainLoop->unreference();
+
+  return Undefined();
+}
+
+extern "C" void init(Handle<Object> target) {
   HandleScope scope;
 
   gtk_init(NULL, NULL);
+
+  GMainContext *gc     = g_main_context_default();
+  gMainLoop            = Glib::MainLoop::create();
+
+  struct econtext *ctx = &default_context;
+
+  ctx->gc  = g_main_context_ref(gc);
+  ctx->nfd = 0;
+  ctx->afd = 0;
+  ctx->iow = 0;
+  ctx->pfd = 0;
+
+  ev_prepare_init (&ctx->pw, prepare_cb);
+  ev_set_priority (&ctx->pw, EV_MINPRI);
+  ev_prepare_start (EV_DEFAULT_ &ctx->pw);
+
+  ev_check_init (&ctx->cw, check_cb);
+  ev_set_priority (&ctx->cw, EV_MAXPRI);
+  ev_check_start (EV_DEFAULT_ &ctx->cw);
+
+  ev_init (&ctx->tw, timer_cb);
+  ev_set_priority (&ctx->tw, EV_MINPRI);
 
   // Position constants.
   NGTK_DEFINE_CONSTANT(target, "WIN_POS_NONE",             GTK_WIN_POS_NONE);
@@ -80,8 +228,10 @@ extern "C" void init (Handle<Object> target) {
   MessageDialog::Initialize(target);
   Button::Initialize(target);
 
-  NGTK_SET_METHOD(target, "main", MainIteration);
-  NGTK_SET_METHOD(target, "decrementLoopLevel", DecrementLoopLevel);
+  NGTK_SET_METHOD(target, "run",         Run);
+  NGTK_SET_METHOD(target, "quit",        Quit);
+  NGTK_SET_METHOD(target, "isRunning",   IsRunning);
+  NGTK_SET_METHOD(target, "depth",       Depth);
+  NGTK_SET_METHOD(target, "reference",   Reference);
+  NGTK_SET_METHOD(target, "unReference", UnReference);
 }
-
-} // namespace ngtk
