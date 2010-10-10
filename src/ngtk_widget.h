@@ -2,9 +2,9 @@
 #define NGTK_WIDGET_H_
 
 #include <v8.h>
+#include <node.h>
 
 #include <gtk/gtk.h>          // GtkWidget
-//#include <gtkmm.h>          // Maybe use this later
 #include <node_object_wrap.h> // node::ObjectWrap
 
 #include "ngtk.h"
@@ -73,12 +73,18 @@ private:
   }
 
   // Event handler.
-  static inline void onSignal (GtkWidget *widget, gpointer callbackPtr) {
+  static inline void onSignal (GtkWidget *widget, gpointer callback_ptr) {
     v8::HandleScope scope;
 
-    v8::Persistent<v8::Function> *callback = reinterpret_cast<v8::Persistent<v8::Function>*>(callbackPtr);
+    v8::Persistent<v8::Function> *callback = reinterpret_cast<v8::Persistent<v8::Function>*>(callback_ptr);
+
+    v8::TryCatch try_catch;
 
     (*callback)->Call(v8::Context::GetCurrent()->Global(), 0, NULL);
+
+    if (try_catch.HasCaught()) {
+      node::FatalException(try_catch);
+    }
   }
 };
 

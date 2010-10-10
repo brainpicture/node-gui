@@ -47,36 +47,6 @@ MessageDialog::MessageDialog (GtkWindow *parent, GtkDialogFlags flags,
   widget_ = gtk_message_dialog_new(parent, flags, type, buttons, "%s", message);
 }
 
-// Run()
-// For showing the dialog.
-Handle<Value> MessageDialog::Run (const Arguments &args) {
-  HandleScope scope;
-
-  GtkWidget *dialog = Widget::Gtk(args.This());
-
-  gtk_dialog_run(GTK_DIALOG(dialog));
-
-  Handle<Value> onRun = args.This()->Get(String::New("onRun"));
-
-  if (onRun->IsFunction()) {
-    v8::Handle<v8::Function>::Cast(onRun)->Call(args.This(), 0, NULL);
-  }
-
-  return args.This();
-}
-
-// Destroy()
-// For removing the dialog.
-Handle<Value> MessageDialog::Destroy (const Arguments &args) {
-  HandleScope scope;
-
-  GtkWidget *dialog = Widget::Gtk(args.This());
-
-  gtk_widget_destroy(dialog);
-
-  return args.This();
-}
-
 // Export.
 void MessageDialog::Initialize (Handle<Object> target) {
   HandleScope scope;
@@ -87,8 +57,6 @@ void MessageDialog::Initialize (Handle<Object> target) {
   constructor_template->SetClassName(String::NewSymbol("MessageDialog"));
 
   Widget::Initialize(constructor_template);
-
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "run", MessageDialog::Run);
 
   target->Set(String::NewSymbol("MessageDialog"), constructor_template->GetFunction());
 }

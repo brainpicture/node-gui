@@ -8,6 +8,7 @@ var button = new gtk.Button();
 button.setLabel('Test Button');
 
 button.on('clicked', function () {
+  throw new Error;
   console.log('clicked');
 });
 
@@ -37,4 +38,6 @@ dialog.show();
 
 process._loop = process.loop;
 
-loop.run();
+process.nextTick(function () {
+  loop.run();
+});

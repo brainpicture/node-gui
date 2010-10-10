@@ -20,8 +20,6 @@ private:
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
   static v8::Handle<v8::Value> New     (const v8::Arguments &args);
-  static v8::Handle<v8::Value> Run     (const v8::Arguments &args);
-  static v8::Handle<v8::Value> Destroy (const v8::Arguments &args);
 
   MessageDialog(GtkWindow *parent, GtkDialogFlags flags,
       GtkMessageType type, GtkButtonsType buttons, gchar *message);
