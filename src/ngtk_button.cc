@@ -26,26 +26,11 @@ Handle<Value> Button::New (const Arguments &args) {
   Button *button = new Button();
   button->Wrap(args.This());
 
-  g_signal_connect(G_OBJECT(button->widget_), "destroy", G_CALLBACK(Button::onDestroy),
-      (gpointer) &button->handle_);
-  g_signal_connect(G_OBJECT(button->widget_), "clicked", G_CALLBACK(Button::onClick),
-      (gpointer) &button->handle_);
-
   return args.This();
 }
 
 Button::Button (void) {
   widget_ = gtk_button_new();
-}
-
-// onClick() - called on a click event.
-void Button::onClick (GtkWidget *button, gpointer dataCast) {
-  v8::Persistent<v8::Object> *self    = reinterpret_cast<v8::Persistent<v8::Object>*>(dataCast);
-  v8::Handle<v8::Value>       onClick = (*self)->Get(v8::String::New("onClick"));
-
-  if (onClick->IsFunction()) {
-    v8::Handle<v8::Function>::Cast(onClick)->Call(*self, 0, NULL);
-  }
 }
 
 // SetLabel()
@@ -80,6 +65,8 @@ void Button::Initialize (Handle<Object> target) {
   constructor_template = Persistent<FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Button"));
+
+  Widget::Initialize(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setLabel", Button::SetLabel);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getLabel", Button::GetLabel);

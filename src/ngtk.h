@@ -11,14 +11,14 @@ namespace ngtk {
                 static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete))
 
 #define NGTK_SET_METHOD(templ, name, callback) \
-templ->Set(String::NewSymbol(name),            \
-    FunctionTemplate::New(callback)->GetFunction());
+templ->Set(v8::String::NewSymbol(name),            \
+    v8::FunctionTemplate::New(callback)->GetFunction());
 
 #define NGTK_SET_PROTOTYPE_METHOD(templ, name, callback)                  \
 do {                                                                      \
   v8::Local<v8::Signature> __callback##_SIG = v8::Signature::New(templ);  \
   v8::Local<v8::FunctionTemplate> __callback##_TEM =                      \
-    FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
+    v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(),              \
                           __callback##_SIG);                              \
   templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
                                   __callback##_TEM);                      \

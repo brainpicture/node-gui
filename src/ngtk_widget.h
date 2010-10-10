@@ -12,6 +12,14 @@ namespace ngtk {
 class Widget : public node::ObjectWrap {
 public:
   // For getting the underlying GtkWidget
+  static void Initialize (v8::Handle<v8::FunctionTemplate> constructor_template) {
+    v8::HandleScope scope;
+
+    NGTK_SET_PROTOTYPE_METHOD(constructor_template, "on",      Widget::On);
+    NGTK_SET_PROTOTYPE_METHOD(constructor_template, "destroy", Widget::Destroy);
+  }
+
+  // For getting the underlying GtkWidget
   static inline GtkWidget* Gtk (v8::Handle<v8::Object> obj) {
     v8::HandleScope scope;
 
@@ -20,15 +28,42 @@ public:
 
   GtkWidget *widget_;
 
-protected:
-  // onDestroy() - Called when the window is being destoyed.
-  static inline void onDestroy (GtkWidget *widget, gpointer dataCast) {
-    v8::Persistent<v8::Object> *self      = reinterpret_cast<v8::Persistent<v8::Object>*>(dataCast);
-    v8::Handle<v8::Value>       onDestroy = (*self)->Get(v8::String::New("onDestroy"));
+private:
+  // Add signal handler.
+  static inline v8::Handle<v8::Value> On (const v8::Arguments &args) {
+    v8::HandleScope scope;
 
-    if (onDestroy->IsFunction()) {
-      v8::Handle<v8::Function>::Cast(onDestroy)->Call(*self, 0, NULL);
+    if (args[0]->IsString() && args[1]->IsFunction()) {
+      GtkWidget *widget = node::ObjectWrap::Unwrap<Widget>(args.This())->widget_;
+
+      v8::Persistent<v8::Function> *callback = new v8::Persistent<v8::Function>();
+      *callback = v8::Persistent<v8::Function>::New(v8::Handle<v8::Function>::Cast(args[1]));
+
+      g_signal_connect(G_OBJECT(widget), *v8::String::Utf8Value(args[0]->ToString()),
+          G_CALLBACK(onSignal), (gpointer) callback);
     }
+
+    return args.This();
+  }
+
+  // For destroying widgets
+  static inline v8::Handle<v8::Value> Destroy (const v8::Arguments &args) {
+    v8::HandleScope scope;
+
+    GtkWidget *widget = node::ObjectWrap::Unwrap<Widget>(args.This())->widget_;
+
+    gtk_widget_destroy(widget);
+
+    return args.This();
+  }
+
+  // Event handler.
+  static inline void onSignal (GtkWidget *widget, gpointer callbackPtr) {
+    v8::HandleScope scope;
+
+    v8::Persistent<v8::Function> *callback = reinterpret_cast<v8::Persistent<v8::Function>*>(callbackPtr);
+
+    (*callback)->Call(v8::Context::GetCurrent()->Global(), 0, NULL);
   }
 };
 

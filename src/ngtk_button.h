@@ -21,8 +21,6 @@ private:
   // gtk_button_*_label()
   static v8::Handle<v8::Value> SetLabel (const v8::Arguments &args);
   static v8::Handle<v8::Value> GetLabel (const v8::Arguments &args);
-  // onClick()
-  static void                  onClick  (GtkWidget *widget, gpointer dataCast);
 
   Button(void);
 

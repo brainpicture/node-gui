@@ -13,9 +13,9 @@ var window = new gtk.Window();
 var button = new gtk.Button();
 button.setLabel('Test Button');
 
-button.onClick = function () {
+button.on('clicked', function () {
   console.log('clicked');
-};
+});
 
 window.add(button);
 
@@ -29,14 +29,15 @@ window.setOpacity(0.9);
 var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
                      gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO, "Testing");
 
-window.onDestroy = function () {
+window.on('destroy', function () {
+  gtk.decrementLoopLevel();
   console.log(window.getOpacity());
   console.log(window.getPosition());
   console.log(window.getSize());
   console.log(window.getResizable(true));
   console.log(window.getTitle());
   console.log('OMG');
-};
+});
 
 window.show();
 dialog.run();

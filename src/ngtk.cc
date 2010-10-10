@@ -14,11 +14,21 @@ using namespace v8;
 int main_loop_level = 0;
 
 Handle<Value> MainIteration(const Arguments& args) {
+  HandleScope scope;
+
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
 
-  return Boolean::New(main_loop_level == 0);
+  return scope.Close(Boolean::New(main_loop_level == 0));
+}
+
+Handle<Value> DecrementLoopLevel (const Arguments &args) {
+  HandleScope scope;
+
+  main_loop_level--;
+
+  return scope.Close(Number::New(main_loop_level));
 }
 
 extern "C" void init (Handle<Object> target) {
@@ -71,6 +81,7 @@ extern "C" void init (Handle<Object> target) {
   Button::Initialize(target);
 
   NGTK_SET_METHOD(target, "main", MainIteration);
+  NGTK_SET_METHOD(target, "decrementLoopLevel", DecrementLoopLevel);
 }
 
 } // namespace ngtk

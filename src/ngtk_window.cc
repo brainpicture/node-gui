@@ -29,10 +29,6 @@ Handle<Value> Window::New (const Arguments &args) {
   Window *window = new Window();
   window->Wrap(args.This());
 
-  // Add the onDestroy handler
-  g_signal_connect(G_OBJECT(window->widget_), "destroy", G_CALLBACK(Window::onDestroy),
-      (gpointer) &window->handle_);
-
   return args.This();
 }
 
@@ -237,13 +233,6 @@ Handle<Value> Window::GetOpacity (const Arguments &args) {
   return scope.Close(Number::New(gtk_window_get_opacity(GTK_WINDOW(window))));
 }
 
-// Window destroys need to decrement the main_loop_level
-void Window::onDestroy (GtkWidget *widget, gpointer dataCast) {
-  Widget::onDestroy(widget, dataCast);
-
-  main_loop_level--;
-}
-
 // Export.
 void Window::Initialize (Handle<Object> target) {
   HandleScope scope;
@@ -252,6 +241,8 @@ void Window::Initialize (Handle<Object> target) {
   constructor_template = Persistent<FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Window"));
+
+  Widget::Initialize(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);

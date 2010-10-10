@@ -39,10 +39,6 @@ Handle<Value> MessageDialog::New (const Arguments &args) {
 
   dialog->Wrap(args.This());
 
-  // Add the onDestroy handler
-  g_signal_connect(G_OBJECT(dialog->widget_), "destroy", G_CALLBACK(MessageDialog::onDestroy),
-      (gpointer) &dialog->handle_);
-
   return args.This();
 }
 
@@ -90,8 +86,9 @@ void MessageDialog::Initialize (Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("MessageDialog"));
 
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "run",     MessageDialog::Run);
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "destroy", MessageDialog::Destroy);
+  Widget::Initialize(constructor_template);
+
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "run", MessageDialog::Run);
 
   target->Set(String::NewSymbol("MessageDialog"), constructor_template->GetFunction());
 }
