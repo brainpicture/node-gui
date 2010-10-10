@@ -1,12 +1,13 @@
 var gtk = require('./build/default/gtk');
 
+var loop = new gtk.Loop();
+
 var window = new gtk.Window();
 
 var button = new gtk.Button();
 button.setLabel('Test Button');
 
 button.on('clicked', function () {
-  console.log(gtk.depth());
   console.log('clicked');
 });
 
@@ -28,10 +29,12 @@ window.on('destroy', function () {
   console.log(window.getResizable(true));
   console.log(window.getTitle());
   console.log('OMG');
-  gtk.quit();
+  loop.quit();
 });
 
 window.show();
 dialog.show();
 
-gtk.run();
+process._loop = process.loop;
+
+loop.run();

@@ -2,6 +2,8 @@
 #define NGTK_H_
 
 #include <v8.h>
+#include <glib.h>
+#include <node_object_wrap.h>
 
 namespace ngtk {
 
@@ -23,8 +25,6 @@ do {                                                                      \
   templ->PrototypeTemplate()->Set(v8::String::NewSymbol(name),            \
                                   __callback##_TEM);                      \
 } while (0)
-
-//global var
 
 } // namespace ngtk
 
