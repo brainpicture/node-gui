@@ -39,7 +39,7 @@ Handle<Value> Button::SetLabel (const Arguments &args) {
   HandleScope scope;
 
   if (args[0]->IsString()) {
-    GtkWidget *button = Widget::Gtk(args.This());
+    GtkWidget *button = Button::Data(args.This());
 
     gtk_button_set_label(GTK_BUTTON(button), *String::Utf8Value(args[0]->ToString()));
   }
@@ -52,7 +52,7 @@ Handle<Value> Button::SetLabel (const Arguments &args) {
 Handle<Value> Button::GetLabel (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *button = Widget::Gtk(args.This());
+  GtkWidget *button = Button::Data(args.This());
 
   return scope.Close(String::New(gtk_button_get_label(GTK_BUTTON(button))));
 }

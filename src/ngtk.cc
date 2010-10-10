@@ -10,6 +10,7 @@
 #include "ngtk_window.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"
+#include "ngtk_entry.h"
 
 namespace ngtk {
 
@@ -185,6 +186,7 @@ extern "C" void init(Handle<Object> target) {
   Window::Initialize(target);
   MessageDialog::Initialize(target);
   Button::Initialize(target);
+  Entry::Initialize(target);
 
   Loop::Initialize(target);
 }

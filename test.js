@@ -3,18 +3,23 @@ var gtk = require('./build/default/gtk');
 var loop = new gtk.Loop();
 
 var window = new gtk.Window();
+var entry  = new gtk.Entry();
 
-var button = new gtk.Button();
-button.setLabel('Test Button');
+entry.setText('A teeheehee!');
+entry.setVisibility(false);
 
-button.on('clicked', function () {
-  console.log('clicked');
-  var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
-                       gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO, "Testing");
-  dialog.show();
-});
+//var button = new gtk.Button();
+//button.setLabel('Test Button');
 
-window.add(button);
+//button.on('clicked', function () {
+  //console.log('clicked');
+  //var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                       //gtk.MESSAGE_INFO);
+  //dialog.show();
+//});
+
+//window.add(button);
+window.add(entry);
 
 window.setTitle('Node');
 window.setResizable(true);

@@ -23,7 +23,7 @@ public:
   }
 
   // For getting the underlying GtkWidget
-  static inline GtkWidget* Gtk (v8::Handle<v8::Object> obj) {
+  static inline GtkWidget* Data (v8::Handle<v8::Object> obj) {
     v8::HandleScope scope;
 
     return node::ObjectWrap::Unwrap<Widget>(obj)->widget_;
@@ -54,7 +54,7 @@ private:
   static inline v8::Handle<v8::Value> Show (const v8::Arguments &args) {
     v8::HandleScope scope;
 
-    GtkWidget *widget = Widget::Gtk(args.This());
+    GtkWidget *widget = node::ObjectWrap::Unwrap<Widget>(args.This())->widget_;
 
     gtk_widget_show_all(widget);
 

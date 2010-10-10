@@ -14,15 +14,15 @@ class MessageDialog : public Widget {
 public:
   static void           Initialize (v8::Handle<v8::Object> target);
   static MessageDialog* New        (Window *parent, GtkDialogFlags flags,
-      GtkMessageType type, GtkButtonsType buttons, gchar *message); // public constructor
+      GtkMessageType type, GtkButtonsType buttons, char *message); // public constructor
 
 private:
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 
-  static v8::Handle<v8::Value> New     (const v8::Arguments &args);
+  static v8::Handle<v8::Value> New (const v8::Arguments &args);
 
   MessageDialog(GtkWindow *parent, GtkDialogFlags flags,
-      GtkMessageType type, GtkButtonsType buttons, gchar *message);
+      GtkMessageType type, GtkButtonsType buttons, char *message);
 };
 
 } // namespace ngtk

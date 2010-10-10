@@ -1,8 +1,11 @@
 #include "ngtk_message_dialog.h"
 
+#include <assert.h>
 #include <v8.h>
 #include <gtk/gtk.h>
+
 #include "ngtk.h"
+#include "ngtk_window.h"
 
 namespace ngtk {
 
@@ -12,7 +15,7 @@ Persistent<FunctionTemplate> MessageDialog::constructor_template;
 
 // Public constructor
 MessageDialog* MessageDialog::New (Window *parent, GtkDialogFlags flags,
-    GtkMessageType type, GtkButtonsType buttons, gchar *message) {
+    GtkMessageType type, GtkButtonsType buttons, char *message) {
   HandleScope scope;
 
   Local<Value> argv[5];
@@ -31,9 +34,20 @@ MessageDialog* MessageDialog::New (Window *parent, GtkDialogFlags flags,
 Handle<Value> MessageDialog::New (const Arguments &args) {
   HandleScope scope;
 
-  // TODO: Type checking.
+  if (4 > args.Length()) {
+    return ThrowException(Exception::Error(
+          String::New("Expects arguments: window or null, dialog flags, message type, button flags[, message]")));
+  }
 
-  MessageDialog *dialog = new MessageDialog(NULL,
+  GtkWindow  *parent;
+
+  if (Window::HasInstance(args[0])) {
+    parent = GTK_WINDOW(Window::Data(args[0]->ToObject()));
+  } else {
+    parent = NULL;
+  }
+
+  MessageDialog *dialog = new MessageDialog(parent,
       (GtkDialogFlags) args[1]->Int32Value(), (GtkMessageType) args[2]->Int32Value(),
       (GtkButtonsType) args[3]->Int32Value(), *String::Utf8Value(args[4]->ToString()));
 

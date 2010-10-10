@@ -18,6 +18,7 @@ def build(bld):
   obj.cxxflags = ["-Wall", "-ansi", "-pedantic"]
   obj.target = "gtk"
   obj.source = """
+               src/ngtk_entry.cc
                src/ngtk_button.cc
                src/ngtk_message_dialog.cc
                src/ngtk_window.cc

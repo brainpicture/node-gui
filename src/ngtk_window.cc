@@ -36,15 +36,28 @@ Window::Window (void) {
   widget_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 }
 
+// Check whether is an instance.
+bool Window::HasInstance (v8::Handle<v8::Value> val) {
+  if (val->IsObject()) {
+    v8::Handle<v8::Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Add()
 // For adding a container to the window.
 Handle<Value> Window::Add (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   // TODO: Check arg is an instance of Widget
-  GtkWidget *other = Widget::Gtk(args[0]->ToObject());
+  GtkWidget *other = Window::Data(args[0]->ToObject());
 
   gtk_container_add(GTK_CONTAINER(window), other);
   gtk_widget_show(other);
@@ -58,7 +71,7 @@ Handle<Value> Window::SetTitle (const Arguments &args) {
   HandleScope scope;
 
   if (args[0]->IsString()) {
-    GtkWidget *window = Widget::Gtk(args.This());
+    GtkWidget *window = Window::Data(args.This());
 
     gtk_window_set_title(GTK_WINDOW(window), *String::Utf8Value(args[0]->ToString()));
   }
@@ -71,7 +84,7 @@ Handle<Value> Window::SetTitle (const Arguments &args) {
 Handle<Value> Window::GetTitle (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   return scope.Close(String::New(gtk_window_get_title(GTK_WINDOW(window))));
 }
@@ -82,7 +95,7 @@ Handle<Value> Window::SetResizable (const Arguments &args) {
   HandleScope scope;
 
   if (args[0]->IsBoolean()) {
-    GtkWidget *window = Widget::Gtk(args.This());
+    GtkWidget *window = Window::Data(args.This());
 
     gtk_window_set_resizable(GTK_WINDOW(window), args[0]->ToBoolean()->Value());
   }
@@ -95,7 +108,7 @@ Handle<Value> Window::SetResizable (const Arguments &args) {
 Handle<Value> Window::GetResizable (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   return scope.Close(Boolean::New(gtk_window_get_resizable(GTK_WINDOW(window))));
 }
@@ -105,7 +118,7 @@ Handle<Value> Window::GetResizable (const Arguments &args) {
 Handle<Value> Window::SetDefaultSize (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   gint width, height;
 
@@ -131,7 +144,7 @@ Handle<Value> Window::SetDefaultSize (const Arguments &args) {
 Handle<Value> Window::GetSize (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   gint width, height;
   Local<Array> ret = Array::New(2);
@@ -158,7 +171,7 @@ Handle<Value> Window::SetPosition (const Arguments &args) {
     case GTK_WIN_POS_MOUSE:
     case GTK_WIN_POS_CENTER_ALWAYS:
     case GTK_WIN_POS_CENTER_ON_PARENT:
-      GtkWidget *window = Widget::Gtk(args.This());
+      GtkWidget *window = Window::Data(args.This());
       gtk_window_set_position(GTK_WINDOW(window), position);
       break;
     }
@@ -172,7 +185,7 @@ Handle<Value> Window::SetPosition (const Arguments &args) {
 Handle<Value> Window::GetPosition (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   gint x, y;
   Local<Array> ret = Array::New(2);
@@ -191,7 +204,7 @@ Handle<Value> Window::SetOpacity (const Arguments &args) {
   HandleScope scope;
 
   if (args[0]->IsNumber()) {
-    GtkWidget *window = Widget::Gtk(args.This());
+    GtkWidget *window = Window::Data(args.This());
 
     gdouble opacity = args[0]->NumberValue();
 
@@ -206,7 +219,7 @@ Handle<Value> Window::SetOpacity (const Arguments &args) {
 Handle<Value> Window::GetOpacity (const Arguments &args) {
   HandleScope scope;
 
-  GtkWidget *window = Widget::Gtk(args.This());
+  GtkWidget *window = Window::Data(args.This());
 
   return scope.Close(Number::New(gtk_window_get_opacity(GTK_WINDOW(window))));
 }
