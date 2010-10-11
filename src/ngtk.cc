@@ -6,7 +6,6 @@
 #include <stdlib.h> // malloc, free
 
 #include "ngtk.h"
-#include "ngtk_loop.h"
 #include "ngtk_window.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"

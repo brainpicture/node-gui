@@ -20,7 +20,6 @@ def build(bld):
                src/ngtk_button.cc
                src/ngtk_message_dialog.cc
                src/ngtk_window.cc
-               src/ngtk_loop.cc
                src/ngtk.cc
                """
   obj.uselib = "GTK GLIB"

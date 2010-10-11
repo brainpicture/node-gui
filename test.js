@@ -9,9 +9,6 @@ entry.setText('A teeheehee!');
 entry.setVisibility(true);
 
 entry.on('changed', function () {
-  setTimeout(function () {
-    entry.appendText(1);
-  }, 2000);
   console.log('changed');
 });
 
@@ -21,12 +18,12 @@ button.setLabel('Test Button');
 button.on('clicked', function () {
   console.log('clicked');
   var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
-                       gtk.MESSAGE_INFO, gtk.BUTTONS_OK);
+                       gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 'Node.js + GTK <3');
   dialog.show();
 });
 
-//window.add(button);
-window.add(entry);
+window.add(button);
+//window.add(entry);
 
 window.setTitle('Node');
 window.setResizable(true);
@@ -42,8 +39,3 @@ window.on('destroy', function () {
 });
 
 window.show();
-
-//setInterval(function () {
-  //console.log('hi');
-//}, 1000);
-console.log('test');
