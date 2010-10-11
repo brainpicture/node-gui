@@ -7,6 +7,7 @@
 
 #include "ngtk.h"
 #include "ngtk_window.h"
+#include "ngtk_hbox.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"
 #include "ngtk_entry.h"
@@ -119,10 +120,22 @@ static void check_cb (EV_P_ ev_check *w, int revents) {
 
 static struct econtext default_context;
 
-extern "C" void init(Handle<Object> target) {
+static Handle<Value> GtkInit (const Arguments &args) {
   HandleScope scope;
 
   gtk_init(NULL, NULL);
+
+  return Undefined();
+}
+
+extern "C" void init(Handle<Object> target) {
+  HandleScope scope;
+
+  // We can't init here.
+  //gtk_init(NULL, NULL);
+
+  // User has to init inside a nextTick etc.
+  NGTK_SET_METHOD(target, "init", GtkInit);
 
   // Position constants.
   NGTK_DEFINE_CONSTANT(target, "WIN_POS_NONE",             GTK_WIN_POS_NONE);
@@ -165,6 +178,7 @@ extern "C" void init(Handle<Object> target) {
   NGTK_DEFINE_CONSTANT(target, "RESPONSE_HELP",         GTK_RESPONSE_HELP);
 
   Window::Initialize(target);
+  Hbox::Initialize(target);
   MessageDialog::Initialize(target);
   Button::Initialize(target);
   Entry::Initialize(target);

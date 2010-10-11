@@ -36,7 +36,7 @@ Handle<Value> Window::New (const Arguments &args) {
 }
 
 Window::Window (void) {
-  widget_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  widget_ =  gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
   // So we can call ev_unref
   g_signal_connect(G_OBJECT(widget_), "destroy", G_CALLBACK(Window::onDestroy), (gpointer) NULL);
@@ -44,8 +44,10 @@ Window::Window (void) {
 
 // Check whether is an instance.
 bool Window::HasInstance (v8::Handle<v8::Value> val) {
+  HandleScope scope;
+
   if (val->IsObject()) {
-    v8::Handle<v8::Object> obj = val->ToObject();
+    v8::Local<v8::Object> obj = val->ToObject();
 
     if (constructor_template->HasInstance(obj)) {
       return true;
@@ -66,7 +68,6 @@ Handle<Value> Window::Add (const Arguments &args) {
   GtkWidget *other = Window::Data(args[0]->ToObject());
 
   gtk_container_add(GTK_CONTAINER(window), other);
-  gtk_widget_show(other);
 
   return args.This();
 }
@@ -236,7 +237,7 @@ Handle<Value> Window::Show (const Arguments &args) {
   // Bump up the ev ref count
   ev_ref(EV_DEFAULT_UC_);
 
-  GtkWidget *widget = ObjectWrap::Unwrap<Widget>(args.This())->widget_;
+  GtkWidget *widget = Window::Data(args.This());
 
   gtk_widget_show_all(widget);
 
@@ -259,7 +260,7 @@ void Window::Initialize (Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Window"));
 
-  Widget::Initialize(constructor_template);
+  Container::Initialize(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);

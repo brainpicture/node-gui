@@ -35,6 +35,21 @@ Entry::Entry (void) {
   widget_ = gtk_entry_new();
 }
 
+// Check whether is an instance.
+bool Entry::HasInstance (v8::Handle<v8::Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    v8::Local<v8::Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // gtk_entry_set_text()
 Handle<Value> Entry::SetText (const Arguments &args) {
   HandleScope scope;
@@ -83,7 +98,7 @@ Handle<Value> Entry::GetTextLength (const Arguments &args) {
 
   GtkWidget *entry = Entry::Data(args.This());
 
-  return scope.Close(Number::New(gtk_entry_get_text_length(GTK_ENTRY(entry))));
+  return scope.Close(Integer::New(gtk_entry_get_text_length(GTK_ENTRY(entry))));
 }
 
 // gtk_entry_select_region()
@@ -163,7 +178,7 @@ Handle<Value> Entry::GetMaxLength (const Arguments &args) {
 
   GtkWidget *entry = Entry::Data(args.This());
 
-  return scope.Close(Number::New(gtk_entry_get_max_length(GTK_ENTRY(entry))));
+  return scope.Close(Integer::New(gtk_entry_get_max_length(GTK_ENTRY(entry))));
 }
 
 // gtk_entry_set_alignment()

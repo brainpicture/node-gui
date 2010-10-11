@@ -11,8 +11,9 @@ namespace ngtk {
 
 class Button : public Widget {
 public:
-  static void       Initialize (v8::Handle<v8::Object> target);
-  static Button*    New        (void); // public constructor
+  static void       Initialize  (v8::Handle<v8::Object> target);
+  static Button*    New         (void); // public constructor
+  static bool       HasInstance (v8::Handle<v8::Value> val);
 
 private:
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

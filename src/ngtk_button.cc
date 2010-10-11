@@ -33,6 +33,21 @@ Button::Button (void) {
   widget_ = gtk_button_new();
 }
 
+// Check whether is an instance.
+bool Button::HasInstance (v8::Handle<v8::Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    v8::Local<v8::Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // SetLabel()
 // For setting the button label.
 Handle<Value> Button::SetLabel (const Arguments &args) {

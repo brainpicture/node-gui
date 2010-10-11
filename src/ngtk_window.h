@@ -5,11 +5,11 @@
 #include <gtk/gtk.h>
 
 #include "ngtk.h"
-#include "ngtk_widget.h"
+#include "ngtk_container.h"
 
 namespace ngtk {
 
-class Window : public Widget {
+class Window : public Container {
 public:
   static void       Initialize  (v8::Handle<v8::Object> target);
   static Window*    New         (void); // public constructor

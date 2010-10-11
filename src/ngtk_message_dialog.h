@@ -12,9 +12,10 @@ namespace ngtk {
 
 class MessageDialog : public Widget {
 public:
-  static void           Initialize (v8::Handle<v8::Object> target);
-  static MessageDialog* New        (Window *parent, GtkDialogFlags flags,
+  static void           Initialize  (v8::Handle<v8::Object> target);
+  static MessageDialog* New         (Window *parent, GtkDialogFlags flags,
       GtkMessageType type, GtkButtonsType buttons, char *message); // public constructor
+  static bool           HasInstance (v8::Handle<v8::Value> val);
 
 private:
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
