@@ -37,6 +37,9 @@ Handle<Value> Window::New (const Arguments &args) {
 
 Window::Window (void) {
   widget_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  // So we can call ev_unref
+  g_signal_connect(G_OBJECT(widget_), "destroy", G_CALLBACK(Window::onDestroy), (gpointer) NULL);
 }
 
 // Check whether is an instance.
@@ -227,8 +230,8 @@ Handle<Value> Window::GetOpacity (const Arguments &args) {
 
 // Show()
 // For showing the widget.
-Handle<Value> Show (const Arguments &args) {
-  v8::HandleScope scope;
+Handle<Value> Window::Show (const Arguments &args) {
+  HandleScope scope;
 
   // Bump up the ev ref count
   ev_ref(EV_DEFAULT_UC_);
@@ -240,18 +243,11 @@ Handle<Value> Show (const Arguments &args) {
   return args.This();
 }
 
-// For destroying widgets
-Handle<v8::Value> Destroy (const Arguments &args) {
-  v8::HandleScope scope;
+// Make sure we get unrefed
+void Window::onDestroy (GtkWidget *widget) {
+  HandleScope scope;
 
-  GtkWidget *widget = ObjectWrap::Unwrap<Widget>(args.This())->widget_;
-
-  gtk_widget_destroy(widget);
-
-  // Un ref
   ev_unref(EV_DEFAULT_UC_);
-
-  return args.This();
 }
 
 // Export.
@@ -265,6 +261,7 @@ void Window::Initialize (Handle<Object> target) {
 
   Widget::Initialize(constructor_template);
 
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setTitle",       Window::SetTitle);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getTitle",       Window::GetTitle);
