@@ -35,6 +35,9 @@ private:
   // gtk_window_*_opacity()
   static v8::Handle<v8::Value> SetOpacity     (const v8::Arguments &args);
   static v8::Handle<v8::Value> GetOpacity     (const v8::Arguments &args);
+  // So we can ref and unref from ev
+  static v8::Handle<v8::Value> Show           (const v8::Arguments &args);
+  static v8::Handle<v8::Value> Destroy        (const v8::Arguments &args);
 
   Window(void);
 };

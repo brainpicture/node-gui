@@ -1,12 +1,15 @@
 #include "ngtk_window.h"
 
 #include <v8.h>
+#include <ev.h>
+#include <node_object_wrap.h>
 #include <gtk/gtk.h>
 #include "ngtk.h"
 
 namespace ngtk {
 
 using namespace v8;
+using namespace node;
 
 #define NGTK_WINDOW_DEFAULT_WIDTH  640
 #define NGTK_WINDOW_DEFAULT_HEIGHT 480
@@ -220,6 +223,35 @@ Handle<Value> Window::GetOpacity (const Arguments &args) {
   GtkWidget *window = Window::Data(args.This());
 
   return scope.Close(Number::New(gtk_window_get_opacity(GTK_WINDOW(window))));
+}
+
+// Show()
+// For showing the widget.
+Handle<Value> Show (const Arguments &args) {
+  v8::HandleScope scope;
+
+  // Bump up the ev ref count
+  ev_ref(EV_DEFAULT_UC_);
+
+  GtkWidget *widget = ObjectWrap::Unwrap<Widget>(args.This())->widget_;
+
+  gtk_widget_show_all(widget);
+
+  return args.This();
+}
+
+// For destroying widgets
+Handle<v8::Value> Destroy (const Arguments &args) {
+  v8::HandleScope scope;
+
+  GtkWidget *widget = ObjectWrap::Unwrap<Widget>(args.This())->widget_;
+
+  gtk_widget_destroy(widget);
+
+  // Un ref
+  ev_unref(EV_DEFAULT_UC_);
+
+  return args.This();
 }
 
 // Export.

@@ -3,7 +3,7 @@ var gtk = require('./build/default/gtk');
 var fs  = require('fs');
 
 process.nextTick(function () {
-  //gtk.gtkInit();
+  gtk.init();
 
   var window = new gtk.Window();
   var entry  = new gtk.Entry();
@@ -13,7 +13,7 @@ process.nextTick(function () {
 
   entry.on('changed', function () {
     setTimeout(function () {
-      console.log(entry);
+      console.log(entry.appendText(1));
     }, 2000);
     console.log('changed');
   });
@@ -50,3 +50,4 @@ process.nextTick(function () {
 setInterval(function () {
   console.log('hi');
 }, 1000);
+console.log('test');

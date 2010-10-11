@@ -30,17 +30,14 @@ struct econtext {
 };
 
 static void timer_cb (EV_P_ ev_timer *w, int revents) {
-  printf("%s\n", "timer_cd");
   /* nop */
 }
 
 static void io_cb (EV_P_ ev_io *w, int revents) {
-  printf("%s\n", "io_cd");
   /* nop */
 }
 
 static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
-  printf("%s\n", "prepare_cb");
   struct econtext *ctx = (struct econtext *)(((char *)w) - offsetof (struct econtext, pw));
   gint timeout;
   int i;
@@ -95,7 +92,6 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
 }
 
 static void check_cb (EV_P_ ev_check *w, int revents) {
-  printf("%s\n", "check_cb");
   struct econtext *ctx = (struct econtext *)(((char *)w) - offsetof (struct econtext, cw));
   int i;
 
@@ -124,18 +120,18 @@ static void check_cb (EV_P_ ev_check *w, int revents) {
 
 static struct econtext default_context;
 
-//static Handle<Value> GtkInit (const Arguments &args) {
-  //HandleScope scope;
+static Handle<Value> GtkInit (const Arguments &args) {
+  HandleScope scope;
 
-  //gtk_init(NULL, NULL);
+  gtk_init(NULL, NULL);
 
-  //return Undefined();
-//}
+  return Undefined();
+}
 
 extern "C" void init(Handle<Object> target) {
   HandleScope scope;
 
-  printf("%s\n", "init");
+  NGTK_SET_METHOD(target, "init", GtkInit);
 
   // Position constants.
   NGTK_DEFINE_CONSTANT(target, "WIN_POS_NONE",             GTK_WIN_POS_NONE);
@@ -182,10 +178,6 @@ extern "C" void init(Handle<Object> target) {
   Button::Initialize(target);
   Entry::Initialize(target);
 
-  //Loop::Initialize(target);
-
-  gtk_init(NULL, NULL);
-
   GMainContext *gc     = g_main_context_default();
   struct econtext *ctx = &default_context;
 
@@ -198,18 +190,15 @@ extern "C" void init(Handle<Object> target) {
   ev_prepare_init (&ctx->pw, prepare_cb);
   ev_set_priority (&ctx->pw, EV_MINPRI);
   ev_prepare_start (EV_DEFAULT_UC_ &ctx->pw);
-  ev_unref(EV_DEFAULT_UC);
+  ev_unref(EV_DEFAULT_UC_);
 
   ev_check_init (&ctx->cw, check_cb);
   ev_set_priority (&ctx->cw, EV_MAXPRI);
-  ev_check_start (EV_DEFAULT_ &ctx->cw);
-  ev_unref(EV_DEFAULT_UC);
+  ev_check_start (EV_DEFAULT_UC_ &ctx->cw);
+  ev_unref(EV_DEFAULT_UC_);
 
   ev_init (&ctx->tw, timer_cb);
   ev_set_priority (&ctx->tw, EV_MINPRI);
-
-
-  printf("%s\n", "init done");
 }
 
 } // namespace ngtk
