@@ -3,7 +3,7 @@
 
 #include <v8.h>
 #include <glib.h>
-#include <node_object_wrap.h>
+#include <gtk/gtk.h>
 
 namespace ngtk {
 

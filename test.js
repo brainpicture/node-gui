@@ -7,10 +7,13 @@ process.nextTick(function () {
 
   var window = new gtk.Window();
   var hbox   = new gtk.Hbox();
-  var hbox2   = new gtk.Hbox();
-  var entry  = new gtk.Entry();
   window.add(hbox);
-  window.add(hbox2);
+
+  var hbox2 = new gtk.Hbox();
+  var hbox3 = new gtk.Hbox();
+  var entry = new gtk.Entry();
+  hbox.add(hbox2);
+  hbox.add(hbox3);
 
   entry.setText('A teeheehee!');
   entry.setVisibility(true);
@@ -29,8 +32,8 @@ process.nextTick(function () {
     dialog.show();
   });
 
-  hbox.add(button);
-  hbox2.add(entry);
+  hbox2.add(button);
+  hbox3.add(entry);
 
   window.setTitle('Node');
   window.setResizable(true);

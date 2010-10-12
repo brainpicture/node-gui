@@ -1,9 +1,5 @@
 #include "ngtk_container.h"
 
-#include <v8.h>
-#include <gtk/gtk.h>
-#include "ngtk.h"
-
 namespace ngtk {
 
 using namespace v8;
@@ -33,10 +29,10 @@ Handle<Value> Container::Remove (const Arguments &args) {
 }
 
 // Export.
-void Container::Initialize (Handle<FunctionTemplate> constructor_template) {
+void Container::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
-  Widget::Initialize(constructor_template);
+  Widget::SetPrototypeMethods(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",    Container::Add);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "remove", Container::Remove);

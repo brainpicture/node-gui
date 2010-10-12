@@ -1,19 +1,19 @@
 #ifndef NGTK_WINDOW_H_
 #define NGTK_WINDOW_H_
 
-#include <v8.h>
-#include <gtk/gtk.h>
-
-#include "ngtk.h"
 #include "ngtk_container.h"
 
 namespace ngtk {
 
+#define NGTK_WINDOW_DEFAULT_WIDTH  640
+#define NGTK_WINDOW_DEFAULT_HEIGHT 480
+
 class Window : public Container {
 public:
-  static void       Initialize  (v8::Handle<v8::Object> target);
-  static Window*    New         (void); // public constructor
-  static bool       HasInstance (v8::Handle<v8::Value> val);
+  static void    SetPrototypeMethods (v8::Handle<v8::FunctionTemplate> constructor_template);
+  static void    Initialize          (v8::Handle<v8::Object> target);
+  static Window* New                 (void); // public constructor
+  static bool    HasInstance         (v8::Handle<v8::Value> val);
 
 private:
   static v8::Persistent<v8::FunctionTemplate> constructor_template;

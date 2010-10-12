@@ -1,12 +1,5 @@
 #include "ngtk_widget.h"
-
-#include <v8.h>
 #include <node.h>
-
-#include <gtk/gtk.h>          // GtkWidget
-#include <node_object_wrap.h> // ObjectWrap
-
-#include "ngtk.h"
 
 namespace ngtk {
 
@@ -68,7 +61,7 @@ void Widget::onSignal (GtkWidget *widget, gpointer callback_ptr) {
   }
 }
 
-void Widget::Initialize (Handle<FunctionTemplate> constructor_template) {
+void Widget::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "on",      Widget::On);

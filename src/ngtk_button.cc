@@ -1,7 +1,4 @@
 #include "ngtk_button.h"
-
-#include <v8.h>
-#include <gtk/gtk.h>
 #include "ngtk.h"
 
 namespace ngtk {
@@ -9,6 +6,21 @@ namespace ngtk {
 using namespace v8;
 
 Persistent<FunctionTemplate> Button::constructor_template;
+
+// Check whether is an instance.
+bool Button::HasInstance (Handle<Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    Local<Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // Public constructor
 Button* Button::New (void) {
@@ -31,21 +43,6 @@ Handle<Value> Button::New (const Arguments &args) {
 
 Button::Button (void) {
   widget_ = gtk_button_new();
-}
-
-// Check whether is an instance.
-bool Button::HasInstance (v8::Handle<v8::Value> val) {
-  HandleScope scope;
-
-  if (val->IsObject()) {
-    v8::Local<v8::Object> obj = val->ToObject();
-
-    if (constructor_template->HasInstance(obj)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // SetLabel()
@@ -73,6 +70,15 @@ Handle<Value> Button::GetLabel (const Arguments &args) {
 }
 
 // Export.
+void Button::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
+  HandleScope scope;
+
+  Widget::SetPrototypeMethods(constructor_template);
+
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setLabel", Button::SetLabel);
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getLabel", Button::GetLabel);
+}
+
 void Button::Initialize (Handle<Object> target) {
   HandleScope scope;
 
@@ -81,10 +87,7 @@ void Button::Initialize (Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Button"));
 
-  Widget::Initialize(constructor_template);
-
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setLabel", Button::SetLabel);
-  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getLabel", Button::GetLabel);
+  Button::SetPrototypeMethods(constructor_template);
 
   target->Set(String::NewSymbol("Button"), constructor_template->GetFunction());
 }

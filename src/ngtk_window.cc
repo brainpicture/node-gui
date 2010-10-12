@@ -1,20 +1,28 @@
 #include "ngtk_window.h"
 
-#include <v8.h>
 #include <ev.h>
-#include <node_object_wrap.h>
-#include <gtk/gtk.h>
-#include "ngtk.h"
 
 namespace ngtk {
 
 using namespace v8;
 using namespace node;
 
-#define NGTK_WINDOW_DEFAULT_WIDTH  640
-#define NGTK_WINDOW_DEFAULT_HEIGHT 480
-
 Persistent<FunctionTemplate> Window::constructor_template;
+
+// Check whether is an instance.
+bool Window::HasInstance (Handle<Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    Local<Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // Public constructor
 Window* Window::New (void) {
@@ -40,21 +48,6 @@ Window::Window (void) {
 
   // So we can call ev_unref
   g_signal_connect(G_OBJECT(widget_), "destroy", G_CALLBACK(Window::onDestroy), (gpointer) NULL);
-}
-
-// Check whether is an instance.
-bool Window::HasInstance (v8::Handle<v8::Value> val) {
-  HandleScope scope;
-
-  if (val->IsObject()) {
-    v8::Local<v8::Object> obj = val->ToObject();
-
-    if (constructor_template->HasInstance(obj)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // Add()
@@ -252,15 +245,10 @@ void Window::onDestroy (GtkWidget *widget) {
 }
 
 // Export.
-void Window::Initialize (Handle<Object> target) {
+void Window::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(Window::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(String::NewSymbol("Window"));
-
-  Container::Initialize(constructor_template);
+  Container::SetPrototypeMethods(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "show",           Window::Show);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "add",            Window::Add);
@@ -274,6 +262,17 @@ void Window::Initialize (Handle<Object> target) {
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getPosition",    Window::GetPosition);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setOpacity",     Window::SetOpacity);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getOpacity",     Window::GetOpacity);
+}
+
+void Window::Initialize (Handle<Object> target) {
+  HandleScope scope;
+
+  Local<FunctionTemplate> t = FunctionTemplate::New(Window::New);
+  constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+  constructor_template->SetClassName(String::NewSymbol("Window"));
+
+  Window::SetPrototypeMethods(constructor_template);
 
   target->Set(String::NewSymbol("Window"), constructor_template->GetFunction());
 }

@@ -1,16 +1,15 @@
-#include <v8.h>
+#include "ngtk.h"
 
 #include <ev.h>
-#include <glib.h>
-#include <gtk/gtk.h>
 #include <stdlib.h> // malloc, free
 
-#include "ngtk.h"
 #include "ngtk_window.h"
 #include "ngtk_hbox.h"
+#include "ngtk_vbox.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"
 #include "ngtk_entry.h"
+
 
 namespace ngtk {
 
@@ -179,6 +178,7 @@ extern "C" void init(Handle<Object> target) {
 
   Window::Initialize(target);
   Hbox::Initialize(target);
+  Vbox::Initialize(target);
   MessageDialog::Initialize(target);
   Button::Initialize(target);
   Entry::Initialize(target);

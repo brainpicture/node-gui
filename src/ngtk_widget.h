@@ -1,19 +1,14 @@
 #ifndef NGTK_WIDGET_H_
 #define NGTK_WIDGET_H_
 
-#include <v8.h>
-#include <node.h>
-
-#include <gtk/gtk.h>          // GtkWidget
 #include <node_object_wrap.h> // node::ObjectWrap
-
 #include "ngtk.h"
 
 namespace ngtk {
 
 class Widget : public node::ObjectWrap {
 public:
-  static void Initialize (v8::Handle<v8::FunctionTemplate> constructor_template);
+  static void SetPrototypeMethods (v8::Handle<v8::FunctionTemplate> constructor_template);
 
   // For getting the underlying GtkWidget
   static inline GtkWidget* Data (v8::Handle<v8::Object> obj) {
@@ -31,6 +26,7 @@ private:
   // For destroying widgets
   static v8::Handle<v8::Value> Destroy (const v8::Arguments &args);
   // Event handler.
+  // TODO: Improve how we handle signals. Signals have variable arguments...
   static void onSignal (GtkWidget *widget, gpointer callback_ptr);
 };
 

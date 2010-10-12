@@ -1,17 +1,25 @@
 #include "ngtk_message_dialog.h"
 
-#include <assert.h>
-#include <v8.h>
-#include <gtk/gtk.h>
-
-#include "ngtk.h"
-#include "ngtk_window.h"
-
 namespace ngtk {
 
 using namespace v8;
 
 Persistent<FunctionTemplate> MessageDialog::constructor_template;
+
+// Check whether is an instance.
+bool MessageDialog::HasInstance (Handle<Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    Local<Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // Public constructor
 MessageDialog* MessageDialog::New (Window *parent, GtkDialogFlags flags,
@@ -61,22 +69,13 @@ MessageDialog::MessageDialog (GtkWindow *parent, GtkDialogFlags flags,
   widget_ = gtk_message_dialog_new(parent, flags, type, buttons, "%s", message);
 }
 
-// Check whether is an instance.
-bool MessageDialog::HasInstance (v8::Handle<v8::Value> val) {
+// Export.
+void MessageDialog::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
-  if (val->IsObject()) {
-    v8::Local<v8::Object> obj = val->ToObject();
-
-    if (constructor_template->HasInstance(obj)) {
-      return true;
-    }
-  }
-
-  return false;
+  Widget::SetPrototypeMethods(constructor_template);
 }
 
-// Export.
 void MessageDialog::Initialize (Handle<Object> target) {
   HandleScope scope;
 
@@ -85,7 +84,7 @@ void MessageDialog::Initialize (Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("MessageDialog"));
 
-  Widget::Initialize(constructor_template);
+  MessageDialog::SetPrototypeMethods(constructor_template);
 
   target->Set(String::NewSymbol("MessageDialog"), constructor_template->GetFunction());
 }

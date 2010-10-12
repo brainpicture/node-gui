@@ -1,16 +1,25 @@
 #include "ngtk_entry.h"
 
-#include <assert.h>
-#include <v8.h>
-#include <gtk/gtk.h>
-
-#include "ngtk.h"
-
 namespace ngtk {
 
 using namespace v8;
 
 Persistent<FunctionTemplate> Entry::constructor_template;
+
+// Check whether is an instance.
+bool Entry::HasInstance (Handle<Value> val) {
+  HandleScope scope;
+
+  if (val->IsObject()) {
+    Local<Object> obj = val->ToObject();
+
+    if (constructor_template->HasInstance(obj)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // Public constructor
 Entry* Entry::New (void) {
@@ -33,21 +42,6 @@ Handle<Value> Entry::New (const Arguments &args) {
 
 Entry::Entry (void) {
   widget_ = gtk_entry_new();
-}
-
-// Check whether is an instance.
-bool Entry::HasInstance (v8::Handle<v8::Value> val) {
-  HandleScope scope;
-
-  if (val->IsObject()) {
-    v8::Local<v8::Object> obj = val->ToObject();
-
-    if (constructor_template->HasInstance(obj)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // gtk_entry_set_text()
@@ -204,15 +198,10 @@ Handle<Value> Entry::GetAlignment (const Arguments &args) {
 }
 
 // Export.
-void Entry::Initialize (Handle<Object> target) {
+void Entry::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(Entry::New);
-  constructor_template = Persistent<FunctionTemplate>::New(t);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(String::NewSymbol("Entry"));
-
-  Widget::Initialize(constructor_template);
+  Widget::SetPrototypeMethods(constructor_template);
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setText",       Entry::SetText);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getText",       Entry::GetText);
@@ -228,6 +217,17 @@ void Entry::Initialize (Handle<Object> target) {
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getMaxLength",  Entry::GetMaxLength);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setAlignment",  Entry::SetAlignment);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getAlignment",  Entry::GetAlignment);
+}
+
+void Entry::Initialize (Handle<Object> target) {
+  HandleScope scope;
+
+  Local<FunctionTemplate> t = FunctionTemplate::New(Entry::New);
+  constructor_template = Persistent<FunctionTemplate>::New(t);
+  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+  constructor_template->SetClassName(String::NewSymbol("Entry"));
+
+  Entry::SetPrototypeMethods(constructor_template);
 
   target->Set(String::NewSymbol("Entry"), constructor_template->GetFunction());
 }

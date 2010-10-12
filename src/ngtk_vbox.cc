@@ -1,13 +1,13 @@
-#include "ngtk_hbox.h"
+#include "ngtk_vbox.h"
 
 namespace ngtk {
 
 using namespace v8;
 
-Persistent<FunctionTemplate> Hbox::constructor_template;
+Persistent<FunctionTemplate> Vbox::constructor_template;
 
 // Check whether is an instance.
-bool Hbox::HasInstance (Handle<Value> val) {
+bool Vbox::HasInstance (Handle<Value> val) {
   HandleScope scope;
 
   if (val->IsObject()) {
@@ -22,20 +22,20 @@ bool Hbox::HasInstance (Handle<Value> val) {
 }
 
 // Public constructor
-Hbox* Hbox::New (bool homogeneous, int spacing) {
+Vbox* Vbox::New (bool homogeneous, int spacing) {
   HandleScope scope;
 
   Local<Value> argv[2];
   argv[0] = Local<Value>::New(Boolean::New(homogeneous));
   argv[1] = Integer::New(spacing);
 
-  Local<Object> hbox = constructor_template->GetFunction()->NewInstance(2, argv);
+  Local<Object> vbox = constructor_template->GetFunction()->NewInstance(2, argv);
 
-  return ObjectWrap::Unwrap<Hbox>(hbox);
+  return ObjectWrap::Unwrap<Vbox>(vbox);
 }
 
 // ECMAScript constructor.
-Handle<Value> Hbox::New (const Arguments &args) {
+Handle<Value> Vbox::New (const Arguments &args) {
   HandleScope scope;
 
   gboolean homogeneous;
@@ -55,34 +55,34 @@ Handle<Value> Hbox::New (const Arguments &args) {
     spacing = 0;
   }
 
-  Hbox *hbox = new Hbox(homogeneous, spacing);
-  hbox->Wrap(args.This());
+  Vbox *vbox = new Vbox(homogeneous, spacing);
+  vbox->Wrap(args.This());
 
   return args.This();
 }
 
-Hbox::Hbox (gboolean homogeneous, gint spacing) {
-  widget_ = gtk_hbox_new(homogeneous, spacing);
+Vbox::Vbox (gboolean homogeneous, gint spacing) {
+  widget_ = gtk_vbox_new(homogeneous, spacing);
 }
 
 // Export.
-void Hbox::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
+void Vbox::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
 
   Box::SetPrototypeMethods(constructor_template);
 }
 
-void Hbox::Initialize (Handle<Object> target) {
+void Vbox::Initialize (Handle<Object> target) {
   HandleScope scope;
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(Hbox::New);
+  Local<FunctionTemplate> t = FunctionTemplate::New(Vbox::New);
   constructor_template = Persistent<FunctionTemplate>::New(t);
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
-  constructor_template->SetClassName(String::NewSymbol("Hbox"));
+  constructor_template->SetClassName(String::NewSymbol("Vbox"));
 
-  Hbox::SetPrototypeMethods(constructor_template);
+  Vbox::SetPrototypeMethods(constructor_template);
 
-  target->Set(String::NewSymbol("Hbox"), constructor_template->GetFunction());
+  target->Set(String::NewSymbol("Vbox"), constructor_template->GetFunction());
 }
 
 } // namespace ngtk
