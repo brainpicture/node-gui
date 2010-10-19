@@ -7,13 +7,19 @@ process.nextTick(function () {
 
   var window = new gtk.Window();
   var hbox   = new gtk.Hbox();
+  var progress_hbox = new gtk.Hbox();
   window.add(hbox);
 
   var hbox2 = new gtk.Hbox();
   var hbox3 = new gtk.Hbox();
   var entry = new gtk.Entry();
+  var progressbar = new gtk.ProgressBar();
   hbox.add(hbox2);
   hbox.add(hbox3);
+  hbox.add(progress_hbox);
+  progress_hbox.add(progressbar);
+  progressbar.setFraction(0.45);
+
 
   entry.setText('A teeheehee!');
   entry.setVisibility(true);

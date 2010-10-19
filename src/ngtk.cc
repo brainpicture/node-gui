@@ -6,6 +6,7 @@
 #include "ngtk_window.h"
 #include "ngtk_hbox.h"
 #include "ngtk_vbox.h"
+#include "ngtk_progressbar.h"
 #include "ngtk_message_dialog.h"
 #include "ngtk_button.h"
 #include "ngtk_entry.h"
@@ -181,6 +182,7 @@ extern "C" void init(Handle<Object> target) {
   Vbox::Initialize(target);
   MessageDialog::Initialize(target);
   Button::Initialize(target);
+  ProgressBar::Initialize(target);
   Entry::Initialize(target);
 
   GMainContext *gc     = g_main_context_default();
