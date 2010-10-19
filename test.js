@@ -29,7 +29,11 @@ process.nextTick(function () {
   });
 
   var button = new gtk.Button();
-  button.setLabel('Test Button');
+  //button.setLabel('Test Button');
+
+  var img = new gtk.Image();
+  img.setFromFile('./data/ngtk.png');
+  button.setImage(img);
 
   button.on('clicked', function () {
     console.log('clicked');

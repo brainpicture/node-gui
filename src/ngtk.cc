@@ -8,6 +8,7 @@
 #include "ngtk_vbox.h"
 #include "ngtk_progressbar.h"
 #include "ngtk_message_dialog.h"
+#include "ngtk_image.h"
 #include "ngtk_button.h"
 #include "ngtk_entry.h"
 
@@ -164,6 +165,12 @@ extern "C" void init(Handle<Object> target) {
   NGTK_DEFINE_CONSTANT(target, "BUTTONS_YES_NO",    GTK_BUTTONS_YES_NO);
   NGTK_DEFINE_CONSTANT(target, "BUTTONS_OK_CANCEL", GTK_BUTTONS_OK_CANCEL);
 
+  // Position
+  NGTK_DEFINE_CONSTANT(target, "POS_TOP", GTK_POS_TOP);
+  NGTK_DEFINE_CONSTANT(target, "POS_RIGHT", GTK_POS_RIGHT);
+  NGTK_DEFINE_CONSTANT(target, "POS_BOTTOM", GTK_POS_BOTTOM);
+  NGTK_DEFINE_CONSTANT(target, "POS_LEFT", GTK_POS_LEFT);
+
   // Response constants
   NGTK_DEFINE_CONSTANT(target, "RESPONSE_NONE",         GTK_RESPONSE_NONE);
   NGTK_DEFINE_CONSTANT(target, "RESPONSE_REJECT",       GTK_RESPONSE_REJECT);
@@ -183,6 +190,7 @@ extern "C" void init(Handle<Object> target) {
   MessageDialog::Initialize(target);
   Button::Initialize(target);
   ProgressBar::Initialize(target);
+  Image::Initialize(target);
   Entry::Initialize(target);
 
   GMainContext *gc     = g_main_context_default();

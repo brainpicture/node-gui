@@ -18,6 +18,7 @@ def build(bld):
   obj.source = """
                src/ngtk_entry.cc
                src/ngtk_button.cc
+               src/ngtk_image.cc
                src/ngtk_message_dialog.cc
                src/ngtk_progressbar.cc
                src/ngtk_vbox.cc

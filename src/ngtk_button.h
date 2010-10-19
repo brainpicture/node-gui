@@ -19,6 +19,8 @@ private:
   // gtk_button_*_label()
   static v8::Handle<v8::Value> SetLabel (const v8::Arguments &args);
   static v8::Handle<v8::Value> GetLabel (const v8::Arguments &args);
+  static v8::Handle<v8::Value> SetImage (const v8::Arguments &args);
+  static v8::Handle<v8::Value> SetImagePosition (const v8::Arguments &args);
 
   Button(void);
 };

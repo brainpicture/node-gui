@@ -1,4 +1,5 @@
 #include "ngtk_button.h"
+#include "ngtk_image.h"
 #include "ngtk.h"
 
 namespace ngtk {
@@ -69,6 +70,19 @@ Handle<Value> Button::GetLabel (const Arguments &args) {
   return scope.Close(String::New(gtk_button_get_label(GTK_BUTTON(button))));
 }
 
+// SetImage()
+// For setting the button image.
+Handle<Value> Button::SetImage (const Arguments &args) {
+  HandleScope scope;
+
+  GtkWidget *button = Button::Data(args.This());
+  GtkWidget *other = Image::Data(args[0]->ToObject());
+
+  gtk_button_set_image(GTK_BUTTON(button), other);
+  
+  return args.This();
+}
+
 // Export.
 void Button::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template) {
   HandleScope scope;
@@ -77,6 +91,7 @@ void Button::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template)
 
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setLabel", Button::SetLabel);
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "getLabel", Button::GetLabel);
+  NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setImage", Button::SetImage);
 }
 
 void Button::Initialize (Handle<Object> target) {
