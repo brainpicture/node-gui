@@ -1,62 +1,50 @@
+var gtk;
 console.log('test.js');
-var gtk = require('./build/default/gtk');
-var fs  = require('fs');
-
-process.nextTick(function () {
+gtk = require('./build/default/gtk');
+process.nextTick(function() {
+  var button, entry, hbox, hbox2, hbox3, img, progress_hbox, progressbar, window;
   gtk.init();
-
-  var window = new gtk.Window();
-  var hbox   = new gtk.Hbox();
-  var progress_hbox = new gtk.Hbox();
+  window = new gtk.Window;
+  hbox = new gtk.Hbox;
+  progress_hbox = new gtk.Hbox;
   window.add(hbox);
-
-  var hbox2 = new gtk.Hbox();
-  var hbox3 = new gtk.Hbox();
-  var entry = new gtk.Entry();
-  var progressbar = new gtk.ProgressBar();
+  hbox2 = new gtk.Hbox;
+  hbox3 = new gtk.Hbox;
+  entry = new gtk.Entry;
+  progressbar = new gtk.ProgressBar;
   hbox.add(hbox2);
   hbox.add(hbox3);
   hbox.add(progress_hbox);
   progress_hbox.add(progressbar);
   progressbar.setFraction(0.45);
-
-
   entry.setText('A teeheehee!');
   entry.setVisibility(true);
-
-  entry.on('changed', function () {
-    console.log('changed');
+  entry.on('changed', function() {
+    return console.log('changed');
   });
-
-  var button = new gtk.Button();
-  //button.setLabel('Test Button');
-
-  var img = new gtk.Image();
+  button = new gtk.Button;
+  button.setLabel('Test Button');
+  img = new gtk.Image;
   img.setFromFile('./data/ngtk.png');
   button.setImage(img);
-
-  button.on('clicked', function () {
+  button.on('clicked', function() {
+    var dialog;
     console.log('clicked');
-    var dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT,
-                         gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 'Node.js + GTK <3');
-    dialog.show();
+    dialog = new gtk.MessageDialog(window, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 'Node.js + GTK <3');
+    return dialog.show();
   });
-
   hbox2.add(button);
   hbox3.add(entry);
-
   window.setTitle('Node');
   window.setResizable(true);
   window.setDefaultSize();
-
-  window.on('destroy', function () {
+  window.on('destroy', function() {
     console.log(window.getOpacity());
     console.log(window.getPosition());
     console.log(window.getSize());
     console.log(window.getResizable(true));
     console.log(window.getTitle());
-    console.log('OMG');
+    return console.log('OMG');
   });
-
-  window.show();
+  return window.show();
 });
