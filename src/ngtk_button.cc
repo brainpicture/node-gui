@@ -94,6 +94,11 @@ void Button::SetPrototypeMethods (Handle<FunctionTemplate> constructor_template)
   NGTK_SET_PROTOTYPE_METHOD(constructor_template, "setImage", Button::SetImage);
 }
 
+void Button::RegisterCallbacks (std::vector<SignalCallback> *callbacks) {
+  Widget::RegisterCallbacks(callbacks);
+  (*callbacks).push_back(SignalCallback("clicked", G_CALLBACK(Widget::SignalBare)));
+}
+
 void Button::Initialize (Handle<Object> target) {
   HandleScope scope;
 
@@ -103,6 +108,9 @@ void Button::Initialize (Handle<Object> target) {
   constructor_template->SetClassName(String::NewSymbol("Button"));
 
   Button::SetPrototypeMethods(constructor_template);
+
+  //Button::callbacks = new std::vector<SignalCallback>;
+  Button::RegisterCallbacks(Button::callbacks);
 
   target->Set(String::NewSymbol("Button"), constructor_template->GetFunction());
 }
